@@ -21,7 +21,8 @@ const NotFound = () => {
         style={{
           maxWidth: '100%',
           height: 'auto',
-          marginTop: '2rem',
+          backgroundColor: "#f4f3fb",
+          marginTop: '5rem',
           display: 'block',
           margin: '0 auto 1.5rem',
           borderRadius: '8px',
