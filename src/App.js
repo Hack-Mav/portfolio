@@ -66,7 +66,7 @@ const NavigationBar = () => {
               transition: "color 0.3s, border-bottom 0.3s",
             })}
           >
-            About
+            About Me
           </NavLink>
         </li>
         <li>
