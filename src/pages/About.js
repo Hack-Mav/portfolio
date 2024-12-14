@@ -1,7 +1,6 @@
 import React from "react";
-import "aos/dist/aos.css";
-
 const About = () => {
+
   return (
     <div style={{ fontFamily: "'Arial', sans-serif", color: "#333" }}>
       {/* Hero Section */}
@@ -23,7 +22,7 @@ const About = () => {
 
       {/* Introduction Section */}
       <div
-        data-aos="fade-up"
+        //data-aos="fade-up"
         style={{ textAlign: "center", padding: "1rem", maxWidth: "800px", margin: "0 auto" }}
       >
         <h2 style={{ color: "#007BFF", fontSize: "2rem", fontWeight: "bold", textAlign: "center", padding: "5px" }}>My Mission</h2>
