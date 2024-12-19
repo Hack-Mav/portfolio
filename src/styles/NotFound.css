@@ -1,0 +1,35 @@
+/* NotFound.css */
+
+.not-found-container {
+    text-align: center;
+    padding: 2rem;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+  }
+  
+  .not-found-image {
+    max-width: 100%;
+    height: auto;
+    background-color: #f4f3fb;
+    margin-top: 5rem;
+    display: block;
+    margin: 0 auto 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .home-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .home-link:hover {
+    background-color: #0056b3;
+  }
+  
