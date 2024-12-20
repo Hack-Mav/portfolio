@@ -1,8 +1,64 @@
 import React, { useState, useEffect } from 'react';
 
+// Define styles outside the component for better readability and reusability
+const styles = {
+  container: {
+    fontFamily: 'Arial, sans-serif',
+    textAlign: 'center',
+    padding: '2rem',
+    backgroundColor: '#f9f9f9',
+    color: '#333',
+  },
+  header: {
+    fontSize: '2rem',
+    marginBottom: '1rem',
+    color: '#222',
+  },
+  description: {
+    fontSize: '1rem',
+    marginBottom: '2rem',
+    color: '#555',
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '1.5rem',
+    justifyContent: 'center',
+  },
+  card: {
+    border: '1px solid #ddd',
+    borderRadius: '10px',
+    backgroundColor: '#fff',
+    padding: '1.5rem',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    transition: 'transform 0.2s, box-shadow 0.2s',
+  },
+  cardHover: {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+  },
+  link: {
+    display: 'inline-block',
+    marginTop: '1rem',
+    color: '#007BFF',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+  },
+  cardTitle: {
+    fontSize: '1.5rem',
+    marginBottom: '0.5rem',
+    color: '#333',
+  },
+  cardDescription: {
+    fontSize: '1rem',
+    color: '#666',
+  },
+};
+
 const Projects = () => {
   const [projects, setProjects] = useState([]);
 
+  // Fetch GitHub repositories
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -17,85 +73,34 @@ const Projects = () => {
     fetchProjects();
   }, []);
 
-  const containerStyle = {
-    fontFamily: 'Arial, sans-serif',
-    textAlign: 'center',
-    padding: '2rem',
-    backgroundColor: '#f9f9f9',
-    color: '#333',
-  };
-
-  const headerStyle = {
-    fontSize: '2rem',
-    marginBottom: '1rem',
-    color: '#222',
-  };
-
-  const descriptionStyle = {
-    fontSize: '1rem',
-    marginBottom: '2rem',
-    color: '#555',
-  };
-
-  const gridStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-    gap: '1.5rem',
-    justifyContent: 'center',
-  };
-
-  const cardStyle = {
-    border: '1px solid #ddd',
-    borderRadius: '10px',
-    backgroundColor: '#fff',
-    padding: '1.5rem',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    transition: 'transform 0.2s, box-shadow 0.2s',
-  };
-
-  const cardHoverStyle = {
-    transform: 'translateY(-5px)',
-    boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
-  };
-
-  const linkStyle = {
-    display: 'inline-block',
-    marginTop: '1rem',
-    color: '#007BFF',
-    textDecoration: 'none',
-    fontWeight: 'bold',
-  };
-
   return (
-    <div style={containerStyle}>
-      <h1 style={headerStyle}>My Projects</h1>
-      <p style={descriptionStyle}>Here you can find details about my past and ongoing projects.</p>
-      <div style={gridStyle}>
+    <div style={styles.container}>
+      <h1 style={styles.header}>My Projects</h1>
+      <p style={styles.description}>Here you can find details about my past and ongoing projects.</p>
+      <div style={styles.grid}>
         {projects.length > 0 ? (
           projects.map((project) => (
             <div
               key={project.id}
-              style={cardStyle}
+              style={styles.card}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = cardHoverStyle.transform;
-                e.currentTarget.style.boxShadow = cardHoverStyle.boxShadow;
+                e.currentTarget.style.transform = styles.cardHover.transform;
+                e.currentTarget.style.boxShadow = styles.cardHover.boxShadow;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'none';
-                e.currentTarget.style.boxShadow = cardStyle.boxShadow;
+                e.currentTarget.style.boxShadow = styles.card.boxShadow;
               }}
             >
-              <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#333' }}>
-                {project.name}
-              </h2>
-              <p style={{ fontSize: '1rem', color: '#666' }}>
+              <h2 style={styles.cardTitle}>{project.name}</h2>
+              <p style={styles.cardDescription}>
                 {project.description || 'No description available.'}
               </p>
               <a
                 href={project.html_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={linkStyle}
+                style={styles.link}
               >
                 View on GitHub
               </a>
