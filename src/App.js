@@ -36,7 +36,7 @@ const NavigationBar = () => {
           listStyleType: "none",
           margin: 0,
           padding: 0,
-          justifyContent: "flex-end",
+          justifyContent: "center",
         }}
       >
         <li>
