@@ -1,118 +1,90 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/Home.css"; // Import the external CSS file
-import { isPrime, generatePrimes, PrimeRenderer } from "my-prime-library";
 
-const Home = () => {
+const Card = ({ title, description }) => (
+  <div className="card">
+    <h3 className="card-title">{title}</h3>
+    <p className="card-description">{description || "No description available"}</p>
+  </div>
+);
 
-  const number = 50;
-  console.log(isPrime(number)); // true
-  console.log(generatePrimes(number)); // [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-
-  return (
-      <div className="container">
-        <Header />
-        <Section
-          title="About Me"
-          content="I am a dedicated developer with expertise in [your skills, e.g., web development, React, Node.js]. I thrive on creating impactful solutions and innovative projects."
-        />
-        <FeaturedProjects />
-        <Footer />
-      </div>
-
-      // <div>
-      //   <h1>Prime Checker</h1>
-      //   <p>{number} is {isPrime(number) ? 'Prime' : 'Not Prime'}</p>
-      //   <p>{number} has folling primes {generatePrimes(number).map((prime) => (
-      //       <li key={prime}>{prime}</li>
-      //   ))}</p>
-      // </div>
-  );
-};
-
-const Header = () => {
-  return (
-    <header className="header">
-      <h1 className="title">Welcome to My Portfolio</h1>
-      <p className="subtitle">
-        Showcasing my work, skills, and passion for development.
-      </p>
-    </header>
-  );
-};
-
-const Section = ({ title, content }) => {
-  return (
-    <section className="section">
-      <h2 className="section-title">{title}</h2>
-      <p className="text">{content}</p>
-    </section>
-  );
-};
+const Header = () => (
+  <header className="header">
+    <h1 className="title">Welcome to My Portfolio</h1>
+    <p className="subtitle">Showcasing my work, skills, and passion for development.</p>
+  </header>
+);
 
 const FeaturedProjects = () => {
-  const projects = [
-    { name: "Project 1", description: "[Brief description]" },
-    { name: "Project 2", description: "[Brief description]" },
-    { name: "Project 3", description: "[Brief description]" },
-  ];
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch("https://api.github.com/users/Hack-Mav/repos");
+        const data = await response.json();
+        setProjects(data);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  if (loading) return <p>Loading projects...</p>;
 
   return (
     <section className="section">
       <h2 className="section-title">Featured Projects</h2>
       <div className="project-grid">
-        {projects.map((project, index) => (
-          <div className="project-card" key={index}>
-            <h3 className="project-name">{project.name}</h3>
-            <p className="project-description">{project.description}</p>
-          </div>
-        ))}
+        {projects.length > 0 ? (
+          projects.map((project) => (
+            <Card key={project.id} title={project.name} description={project.description} />
+          ))
+        ) : (
+          <p className="no-projects">No projects to display</p>
+        )}
       </div>
     </section>
   );
 };
 
-const Footer = () => {
-  return (
-    <footer className="footer">
-      <p className="footer-text">
-        Connect with me on{" "}
-        <a href="https://www.linkedin.com" className="link">
-          LinkedIn
-        </a>{" "}
-        or check out my work on
-        <a href="https://github.com" className="link">
-          {" "}
-          GitHub
-        </a>
-        .
-      </p>
-      <div className="social-icons">
-        <SocialIcon
-          url="https://twitter.com"
-          icon="/icons/twitter.png"
-          alt="Twitter"
-        />
-        <SocialIcon
-          url="https://facebook.com"
-          icon="/icons/facebook.png"
-          alt="Facebook"
-        />
-        <SocialIcon
-          url="https://instagram.com"
-          icon="/icons/instagram.png"
-          alt="Instagram"
-        />
-      </div>
-    </footer>
-  );
-};
+const SocialIcon = ({ url, icon, alt }) => (
+  <a href={url} className="icon-link" target="_blank" rel="noopener noreferrer" aria-label={alt}>
+    <img src={icon} alt={alt} className="icon" />
+  </a>
+);
 
-const SocialIcon = ({ url, icon, alt }) => {
-  return (
-    <a href={url} className="icon-link">
-      <img src={icon} alt={alt} className="icon" />
-    </a>
-  );
-};
+const Footer = () => (
+  <footer className="footer">
+    <p className="footer-text">
+      Connect with me on{" "}
+      <a href="https://www.linkedin.com" className="link" target="_blank" rel="noopener noreferrer">
+        LinkedIn
+      </a>{" "}
+      or check out my work on{" "}
+      <a href="https://github.com" className="link" target="_blank" rel="noopener noreferrer">
+        GitHub
+      </a>
+      .
+    </p>
+    <div className="social-icons">
+      <SocialIcon url="https://twitter.com" icon="/icons/twitter.png" alt="Twitter" />
+      <SocialIcon url="https://facebook.com" icon="/icons/facebook.png" alt="Facebook" />
+      <SocialIcon url="https://instagram.com" icon="/icons/instagram.jpg" alt="Instagram" />
+    </div>
+  </footer>
+);
+
+const Home = () => (
+  <div className="container">
+    <Header />
+    <FeaturedProjects />
+    <Footer />
+  </div>
+);
 
 export default Home;

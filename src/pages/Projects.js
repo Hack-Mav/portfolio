@@ -1,72 +1,26 @@
 import React, { useState, useEffect } from 'react';
-
-// Define styles outside the component for better readability and reusability
-const styles = {
-  container: {
-    fontFamily: 'Arial, sans-serif',
-    textAlign: 'center',
-    padding: '2rem',
-    backgroundColor: '#f9f9f9',
-    color: '#333',
-  },
-  header: {
-    fontSize: '2rem',
-    marginBottom: '1rem',
-    color: '#222',
-  },
-  description: {
-    fontSize: '1rem',
-    marginBottom: '2rem',
-    color: '#555',
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-    gap: '1.5rem',
-    justifyContent: 'center',
-  },
-  card: {
-    border: '1px solid #ddd',
-    borderRadius: '10px',
-    backgroundColor: '#fff',
-    padding: '1.5rem',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    transition: 'transform 0.2s, box-shadow 0.2s',
-  },
-  cardHover: {
-    transform: 'translateY(-5px)',
-    boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
-  },
-  link: {
-    display: 'inline-block',
-    marginTop: '1rem',
-    color: '#007BFF',
-    textDecoration: 'none',
-    fontWeight: 'bold',
-  },
-  cardTitle: {
-    fontSize: '1.5rem',
-    marginBottom: '0.5rem',
-    color: '#333',
-  },
-  cardDescription: {
-    fontSize: '1rem',
-    color: '#666',
-  },
-};
+import '../styles/Projects.css'; // Create a separate CSS file for styles
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Fetch GitHub repositories
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await fetch('https://api.github.com/users/Hack-Mav/repos');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setProjects(data);
       } catch (error) {
         console.error('Error fetching projects:', error);
+        setError('Failed to load projects. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -74,41 +28,30 @@ const Projects = () => {
   }, []);
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.header}>My Projects</h1>
-      <p style={styles.description}>Here you can find details about my past and ongoing projects.</p>
-      <div style={styles.grid}>
-        {projects.length > 0 ? (
+    <div className="projects-container">
+      <h1 className="projects-header">My Projects</h1>
+      <p className="projects-description">Here you can find details about my past and ongoing projects.</p>
+      <div className="projects-grid">
+        {loading && <p className="loading-text">Loading projects...</p>}
+        {error && <p className="error-text">{error}</p>}
+        {projects.length > 0 &&
           projects.map((project) => (
-            <div
-              key={project.id}
-              style={styles.card}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = styles.cardHover.transform;
-                e.currentTarget.style.boxShadow = styles.cardHover.boxShadow;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'none';
-                e.currentTarget.style.boxShadow = styles.card.boxShadow;
-              }}
-            >
-              <h2 style={styles.cardTitle}>{project.name}</h2>
-              <p style={styles.cardDescription}>
+            <div key={project.id} className="project-card">
+              <h2 className="project-card-title">{project.name}</h2>
+              <p className="project-card-description">
                 {project.description || 'No description available.'}
               </p>
               <a
                 href={project.html_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={styles.link}
+                className="project-card-link"
+                aria-label={`View ${project.name} on GitHub`}
               >
                 View on GitHub
               </a>
             </div>
-          ))
-        ) : (
-          <p>Loading projects...</p>
-        )}
+          ))}
       </div>
     </div>
   );

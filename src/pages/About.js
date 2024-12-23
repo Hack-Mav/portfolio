@@ -1,5 +1,39 @@
 import React from "react";
 
+// Shared Styles
+const sectionStyle = {
+  padding: "2rem",
+  maxWidth: "800px",
+  margin: "0 auto",
+};
+
+const headingStyle = {
+  textAlign: "center",
+  color: "#007BFF",
+  fontSize: "2rem",
+  fontWeight: "bold",
+  marginBottom: "1rem",
+};
+
+// Reusable Card Component
+const Card = ({ title, description, children }) => (
+  <div
+    style={{
+      border: "1px solid #ddd",
+      borderRadius: "8px",
+      padding: "1rem",
+      backgroundColor: "#f9f9f9",
+      marginBottom: "1rem",
+      textAlign: "center",
+      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+    }}
+  >
+    <h3 style={{ color: "#007BFF" }}>{title}</h3>
+    {description && <p>{description}</p>}
+    {children}
+  </div>
+);
+
 // Hero Section Component
 const HeroSection = () => (
   <div
@@ -21,42 +55,27 @@ const HeroSection = () => (
 
 // Mission Section Component
 const MissionSection = () => (
-  <div style={{ textAlign: "center", padding: "1rem", maxWidth: "800px", margin: "0 auto" }}>
-    <h2 style={{ color: "#007BFF", fontSize: "2rem", fontWeight: "bold", textAlign: "center", padding: "5px" }}>
-      My Mission
-    </h2>
-    <p style={{ lineHeight: "1.6", textAlign: "left" }}>
+  <section style={sectionStyle}>
+    <h2 style={headingStyle}>My Mission</h2>
+    <p style={{ lineHeight: "1.6", textAlign: "justify" }}>
       To develop efficient and scalable applications that solve real-world problems while leveraging cutting-edge technologies.
     </p>
-    <p style={{ lineHeight: "1.6", marginTop: "1rem", textAlign: "left" }}>
+    <p style={{ lineHeight: "1.6", marginTop: "1rem", textAlign: "justify" }}>
       I aim to bridge the gap between innovative ideas and technical implementation by creating solutions that are both robust and user-friendly.
-      My mission is to continuously learn and evolve with the ever-changing tech landscape, ensuring that I stay ahead in providing the most
-      efficient tools and applications to clients and businesses worldwide.
     </p>
-  </div>
+  </section>
 );
 
 // Skills Section Component
-const SkillCard = ({ title, description }) => (
-  <div
-    style={{
-      padding: "1rem",
-      border: "1px solid #ddd",
-      borderRadius: "8px",
-      textAlign: "center",
-      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-    }}
-  >
-    <h3 style={{ color: "#007BFF" }}>{title}</h3>
-    <p>{description}</p>
-  </div>
-);
+const skills = [
+  { title: "ReactJS", description: "Front-End Development" },
+  { title: "Golang", description: "Back-End Development" },
+  { title: "MongoDB", description: "Database Management" },
+];
 
 const SkillsSection = () => (
-  <section style={{ padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
-    <h2 style={{ textAlign: "center", color: "#007BFF", fontSize: "2rem", fontWeight: "bold" }}>
-      Technical Skills
-    </h2>
+  <section style={sectionStyle}>
+    <h2 style={headingStyle}>Technical Skills</h2>
     <div
       style={{
         display: "grid",
@@ -65,92 +84,94 @@ const SkillsSection = () => (
         marginTop: "1rem",
       }}
     >
-      <SkillCard title="ReactJS" description="Front-End Development" />
-      <SkillCard title="Golang" description="Back-End Development" />
-      <SkillCard title="MongoDB" description="Database Management" />
+      {skills.map((skill, index) => (
+        <Card key={index} title={skill.title} description={skill.description} />
+      ))}
     </div>
   </section>
 );
 
 // Experience Section Component
-const ExperienceCard = ({ title, date, location, duties }) => (
-  <div style={{ marginBottom: "1rem" }}>
-    <h3>{title}</h3>
-    <p style={{ margin: "0.5rem 0", color: "#555" }}>
-      <em>{date} | {location}</em>
-    </p>
-    <ul style={{ listStyleType: "disc", paddingLeft: "2rem", lineHeight: "1.8" }}>
-      {duties.map((duty, index) => (
-        <li key={index}>{duty}</li>
-      ))}
-    </ul>
-  </div>
-);
+const experiences = [
+  {
+    title: "Full-Stack Developer - Flyhigh EduTech Solutions",
+    date: "May 2023 – Dec 2024",
+    location: "Noida, India",
+    duties: [
+      "Developed end-to-end features using ReactJS and Golang.",
+      "Managed MySQL and MongoDB databases, optimizing queries.",
+      "Configured and deployed applications on Google Cloud Platform (GCP).",
+    ],
+  },
+  {
+    title: "Software Development Intern - Gao Tek Inc.",
+    date: "Jan 2023 – Apr 2023",
+    location: "Bangalore, India",
+    duties: [
+      "Researched requirements and integrated APIs with existing codebases.",
+      "Collaborated with senior developers to debug and enhance libraries.",
+    ],
+  },
+];
 
 const ExperienceSection = () => (
-  <section style={{ padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
-    <h2 style={{ textAlign: "center", color: "#007BFF", fontSize: "2rem", fontWeight: "bold", padding: "5px" }}>
-      Professional Experience
-    </h2>
-    <ExperienceCard
-      title="Full-Stack Developer - Flyhigh EduTech Solutions"
-      date="May 2023 – Dec 2024"
-      location="Noida, India"
-      duties={[
-        "Developed end-to-end features using ReactJS and Golang.",
-        "Managed MySQL and MongoDB databases, optimizing queries.",
-        "Configured and deployed applications on Google Cloud Platform (GCP).",
-      ]}
-    />
-    <ExperienceCard
-      title="Software Development Intern - Gao Tek Inc."
-      date="Jan 2023 – Apr 2023"
-      location="Bangalore, India"
-      duties={[
-        "Researched requirements and integrated APIs with existing codebases.",
-        "Collaborated with senior developers to debug and enhance libraries.",
-      ]}
-    />
+  <section style={sectionStyle}>
+    <h2 style={headingStyle}>Professional Experience</h2>
+    {experiences.map((exp, index) => (
+      <Card key={index} title={exp.title}>
+        <p style={{ margin: "0.5rem 0", color: "#555" }}>
+          <em>
+            {exp.date} | {exp.location}
+          </em>
+        </p>
+        <ul style={{ listStyleType: "disc", paddingLeft: "2rem", lineHeight: "1.8" }}>
+          {exp.duties.map((duty, i) => (
+            <li key={i}>{duty}</li>
+          ))}
+        </ul>
+      </Card>
+    ))}
   </section>
 );
 
 // Achievements Section Component
-const AchievementCard = ({ title, description }) => (
-  <div
-    style={{
-      border: "1px solid #ddd",
-      borderRadius: "8px",
-      padding: "1rem",
-      backgroundColor: "#f9f9f9",
-      marginBottom: "1rem",
-    }}
-  >
-    <h3>{title}</h3>
-    <p>{description}</p>
-  </div>
-);
+const achievements = [
+  { title: "GATE 2022", description: "Secured 7384th Rank among 126,979 candidates." },
+  { title: "HackerRank Badges", description: "Earned 7 badges, including 4 4-star badges." },
+];
 
 const AchievementsSection = () => (
-  <section style={{ padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
-    <h2 style={{ textAlign: "center", color: "#007BFF", fontSize: "2rem", fontWeight: "bold", padding: "5px" }}>
-      Achievements
-    </h2>
-    <AchievementCard title="GATE 2022" description="Secured 7384th Rank among 126,979 candidates." />
-    <AchievementCard title="HackerRank Badges" description="Earned 7 badges, including 4 4-star badges." />
+  <section style={sectionStyle}>
+    <h2 style={headingStyle}>Achievements</h2>
+    {achievements.map((ach, index) => (
+      <Card key={index} title={ach.title} description={ach.description} />
+    ))}
   </section>
 );
 
 // Contact Section Component
 const ContactSection = () => (
-  <section style={{ padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
-    <h2 style={{ textAlign: "center", color: "#007BFF", fontSize: "2rem", fontWeight: "bold" }}>
-      Contact Details
-    </h2>
+  <section style={sectionStyle}>
+    <h2 style={headingStyle}>Contact Details</h2>
     <div style={{ textAlign: "left", lineHeight: "1.8", fontSize: "1.2rem" }}>
-      <p><strong>Phone:</strong> +91-9589883958</p>
-      <p><strong>Email:</strong> parthiv05022000@gmail.com</p>
-      <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/parthiv-rawat" target="_blank" rel="noopener noreferrer">linkedin.com/in/parthiv-rawat</a></p>
-      <p><strong>GitHub:</strong> <a href="https://github.com/Hack-Mav" target="_blank" rel="noopener noreferrer">github.com/Hack-Mav</a></p>
+      <p>
+        <strong>Phone:</strong> +91-9589883958
+      </p>
+      <p>
+        <strong>Email:</strong> parthiv05022000@gmail.com
+      </p>
+      <p>
+        <strong>LinkedIn:</strong>{" "}
+        <a href="https://www.linkedin.com/in/parthiv-rawat" target="_blank" rel="noopener noreferrer">
+          linkedin.com/in/parthiv-rawat
+        </a>
+      </p>
+      <p>
+        <strong>GitHub:</strong>{" "}
+        <a href="https://github.com/Hack-Mav" target="_blank" rel="noopener noreferrer">
+          github.com/Hack-Mav
+        </a>
+      </p>
     </div>
   </section>
 );

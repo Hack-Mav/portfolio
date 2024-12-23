@@ -16,6 +16,10 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!formData.email.includes("@")) {
+      alert("Please enter a valid email address.");
+      return;
+    }
     console.log("Form Submitted:", formData);
     alert("Thank you for reaching out to us!");
     setFormData({ name: "", email: "", subject: "", message: "" });
@@ -66,7 +70,6 @@ const Contact = () => {
       <div className="contact-info">
         <p>Phone: +91 9589883958</p>
         <p>Email: parthiv05022000@gmail.com</p>
-        {/* <p>Address: 123 Example Street, City, Country</p> */}
       </div>
     </div>
   );
@@ -74,15 +77,15 @@ const Contact = () => {
 
 const FormInput = ({ label, ...props }) => (
   <div className="form-input-container">
-    <label className="form-label">{label}</label>
-    <input className="form-input" {...props} required />
+    <label htmlFor={props.name} className="form-label">{label}</label>
+    <input id={props.name} className="form-input" {...props} required />
   </div>
 );
 
 const FormTextArea = ({ label, ...props }) => (
   <div className="form-input-container">
-    <label className="form-label">{label}</label>
-    <textarea className="form-input" {...props} required />
+    <label htmlFor={props.name} className="form-label">{label}</label>
+    <textarea id={props.name} className="form-input" {...props} required />
   </div>
 );
 
