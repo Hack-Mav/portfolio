@@ -1,14 +1,31 @@
-import React from 'react';
-import '../styles/Home.css'; // Import the external CSS file
+import React from "react";
+import "../styles/Home.css"; // Import the external CSS file
+import { isPrime, generatePrimes, PrimeRenderer } from "my-prime-library";
 
 const Home = () => {
+
+  const number = 50;
+  console.log(isPrime(number)); // true
+  console.log(generatePrimes(number)); // [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+
   return (
-    <div className="container">
-      <Header />
-      <Section title="About Me" content="I am a dedicated developer with expertise in [your skills, e.g., web development, React, Node.js]. I thrive on creating impactful solutions and innovative projects." />
-      <FeaturedProjects />
-      <Footer />
-    </div>
+      <div className="container">
+        <Header />
+        <Section
+          title="About Me"
+          content="I am a dedicated developer with expertise in [your skills, e.g., web development, React, Node.js]. I thrive on creating impactful solutions and innovative projects."
+        />
+        <FeaturedProjects />
+        <Footer />
+      </div>
+
+      // <div>
+      //   <h1>Prime Checker</h1>
+      //   <p>{number} is {isPrime(number) ? 'Prime' : 'Not Prime'}</p>
+      //   <p>{number} has folling primes {generatePrimes(number).map((prime) => (
+      //       <li key={prime}>{prime}</li>
+      //   ))}</p>
+      // </div>
   );
 };
 
@@ -16,7 +33,9 @@ const Header = () => {
   return (
     <header className="header">
       <h1 className="title">Welcome to My Portfolio</h1>
-      <p className="subtitle">Showcasing my work, skills, and passion for development.</p>
+      <p className="subtitle">
+        Showcasing my work, skills, and passion for development.
+      </p>
     </header>
   );
 };
@@ -32,9 +51,9 @@ const Section = ({ title, content }) => {
 
 const FeaturedProjects = () => {
   const projects = [
-    { name: 'Project 1', description: '[Brief description]' },
-    { name: 'Project 2', description: '[Brief description]' },
-    { name: 'Project 3', description: '[Brief description]' },
+    { name: "Project 1", description: "[Brief description]" },
+    { name: "Project 2", description: "[Brief description]" },
+    { name: "Project 3", description: "[Brief description]" },
   ];
 
   return (
@@ -56,13 +75,33 @@ const Footer = () => {
   return (
     <footer className="footer">
       <p className="footer-text">
-        Connect with me on <a href="https://www.linkedin.com" className="link">LinkedIn</a> or check out my work on
-        <a href="https://github.com" className="link"> GitHub</a>.
+        Connect with me on{" "}
+        <a href="https://www.linkedin.com" className="link">
+          LinkedIn
+        </a>{" "}
+        or check out my work on
+        <a href="https://github.com" className="link">
+          {" "}
+          GitHub
+        </a>
+        .
       </p>
       <div className="social-icons">
-        <SocialIcon url="https://twitter.com" icon="/icons/twitter.png" alt="Twitter" />
-        <SocialIcon url="https://facebook.com" icon="/icons/facebook.png" alt="Facebook" />
-        <SocialIcon url="https://instagram.com" icon="/icons/instagram.png" alt="Instagram" />
+        <SocialIcon
+          url="https://twitter.com"
+          icon="/icons/twitter.png"
+          alt="Twitter"
+        />
+        <SocialIcon
+          url="https://facebook.com"
+          icon="/icons/facebook.png"
+          alt="Facebook"
+        />
+        <SocialIcon
+          url="https://instagram.com"
+          icon="/icons/instagram.png"
+          alt="Instagram"
+        />
       </div>
     </footer>
   );
