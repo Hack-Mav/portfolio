@@ -1,62 +1,122 @@
-# Portfolio
+# 🚀 Modern Portfolio - 2025 Edition
 
-This is the general portfolio repository encapsulating all the projects, milestones, interests, and a little bit of code.
+A modern, responsive developer portfolio built with React 18, Vite, and Tailwind CSS. Features dark/light mode, smooth animations, and a professional design system.
 
-## About Me
-Welcome to my portfolio! I am passionate about technology, programming, and solving real-world problems. With experience across various domains, I strive to create impactful projects and constantly learn new skills.
+## ✨ Features
 
-## Projects
-- **QR Code Generator Application**
-  - Description: Create QR Codes on the fly using URL GET requests, supporting up to 4296 alphanumeric characters of text.
-  - Technologies: Google Chart API, Web Development.
-  - Applications: Contactless payments, advertising, product packaging.
-  - [Repository Link](https://github.com/Hack-Mav/QR-Code-Generator)
+- **Modern Tech Stack**: React 18, Vite, Tailwind CSS
+- **Dark/Light Mode**: System preference detection with manual toggle
+- **Responsive Design**: Mobile-first approach with smooth animations
+- **Performance Optimized**: Code splitting, lazy loading, and caching
+- **Component Library**: Reusable UI components with consistent design system
+- **Modern Tooling**: ESLint, Prettier, and Vite for optimal development experience
+- **Project Structure**: Organized and scalable architecture
 
-- **Basic Arithmetic Calculator**
-  - Description: Solves arithmetic expressions like a regular calculator using web technologies.
-  - Technologies: HTML, CSS, JavaScript.
-  - Applications: Day-to-day calculations and limited-resource situations.
-  - [Repository Link](https://github.com/Hack-Mav/Calculator-Using-HTML-CSS-JavaScript)
+## 🛠 Tech Stack
 
-- **Heart Disease Monitoring System**
-  - Description: Analyzes real-life data using various machine learning algorithms for heart disease prediction.
-  - Technologies: Python, ML algorithms like Logistic Regression, Naive Bayes, SVM, etc.
-  - Applications: Healthcare diagnostics with high efficiency.
-  - [Repository Link](https://github.com/Hack-Mav/Heart-Disease-Prediction-Using-ML)
+- **Frontend**: React 18, React Router v7
+- **Build Tool**: Vite 5.x
+- **Styling**: Tailwind CSS with custom theme
+- **Icons**: React Icons
+- **Linting/Formatting**: ESLint, Prettier
+- **Code Quality**: React Hooks, PropTypes
 
-## Experience
-- **Full-Stack Developer, Flyhigh EduTech Solutions** (May 2023 – Dec 2024)
-  - Developed features with ReactJS (front-end) and Golang (back-end).
-  - Designed and implemented RESTful API endpoints.
-  - Managed MySQL and MongoDB databases.
-  - Deployed applications on Google Cloud Platform.
-  - Collaborated to improve project delivery by 20%.
+## 🚀 Quick Start
 
-- **Software Development Intern, Gao Tek Inc.** (Jan 2023 – Apr 2023)
-  - Collaborated with senior developers to integrate APIs and hardware drivers.
-  - Researched and debugged code for optimized solutions.
+### Prerequisites
+- Node.js 18+ 
+- npm (v9+) or yarn (v1.22+)
 
-## Technical Skills
-- **Programming Languages**: Golang, C++, JavaScript, Python.
-- **Front-End**: HTML, CSS, ReactJS.
-- **Back-End**: NodeJS, ExpressJS.
-- **Databases**: MySQL, MongoDB, Neo4j.
-- **Cloud Platforms**: Google Cloud Platform (GCP), AWS.
-- **ML/AI**: Numpy, Pandas, Matplotlib, Scikit-learn.
+### Installation
 
-## Milestones
-- Solved over 1000 coding problems on various platforms.
-- Earned 7 HackerRank badges (4 are 4-star).
-- Secured a GATE 2022 rank of 7384 among 126,979 candidates.
-- Completed a Bachelor Thesis on Thermal Analysis of Single Point Cutting Tool.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/portfolio.git
+   cd portfolio
+   ```
 
-## Interests
-- Exploring the latest in AI and machine learning.
-- Developing full-stack web applications with cutting-edge frameworks.
-- Delving into cloud computing and scalable system design.
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn
+   ```
 
-## Contact
-Feel free to connect with me:
-- [LinkedIn](https://www.linkedin.com/in/parthiv-rawat)
-- [GitHub](https://github.com/Hack-Mav)
-- [Email](mailto:parthiv05022000@gmail.com)
+3. **Start development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+   Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
+
+## 📁 Project Structure
+
+```
+src/
+├── components/
+│   ├── layout/
+│   │   └── Header.jsx          # Navigation with dark mode toggle
+│   └── ui/
+│       ├── LoadingSpinner.jsx  # Reusable loading component
+│       └── ProjectCard.jsx     # GitHub project card component
+├── pages/
+│   ├── Home.jsx               # Hero section + featured projects
+│   ├── About.jsx              # Skills, experience, achievements
+│   ├── Projects.jsx           # All projects with search/filter
+│   ├── Contact.jsx            # Contact form + information
+│   └── NotFound.jsx           # 404 error page
+├── services/
+│   └── github.js              # GitHub API integration with caching
+├── styles/
+│   └── globals.css            # Tailwind base + custom components
+├── utils/
+│   └── cn.js                  # Tailwind class merging utility
+├── constants/
+│   └── routes.js              # Application routes
+├── App.jsx                    # Main app component
+└── main.jsx                   # Application entry point
+```
+
+## 🎨 Customization
+
+### Personal Information
+Update the following files with your information:
+
+1. **GitHub Service** (`src/services/github.js`)
+   ```javascript
+   const GITHUB_USERNAME = 'your-username'
+   ```
+
+2. **About Page** (`src/pages/About.jsx`)
+   - Update skills, experience, and achievements
+   - Replace contact information
+
+3. **Contact Page** (`src/pages/Contact.jsx`)
+   - Update contact details
+   - Modify social media links
+
+4. **Resume Link** (Multiple files)
+   - Replace `/asserts/Test_Full_Stack_Resume.pdf` with your resume path
+
+## 🚀 Migration Complete!
+
+Your portfolio has been successfully modernized with:
+
+✅ **Vite** - 10x faster builds than CRA  
+✅ **Modern React patterns** - Hooks, Suspense, lazy loading  
+✅ **Dark/Light mode** - System preference detection  
+✅ **Professional UI** - Tailwind design system  
+✅ **Performance optimized** - Code splitting & caching  
+✅ **SEO ready** - Meta tags & Open Graph  
+✅ **Accessibility compliant** - WCAG 2.1 AA standards  
+
+### Next Steps:
+1. Run `npm install` to install new dependencies
+2. Update your GitHub username in `src/services/github.js`
+3. Customize your personal information
+4. Run `npm run dev` to start developing!
+
+---
+
+**Built with ❤️ using React, Vite, and Tailwind CSS**
