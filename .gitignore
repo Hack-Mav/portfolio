@@ -65,3 +65,5 @@ deployment/
 .vercel
 .netlify
 .surge.sh
+*storybook.log
+storybook-static
