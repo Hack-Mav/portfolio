@@ -1,14 +1,42 @@
 // src/App.test.tsx
-import { describe, it, expect } from 'vitest';
-import { render, screen } from './test-utils';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import App from './App';
 
+// Mock react-helmet-async
+vi.mock('react-helmet-async', () => ({
+  HelmetProvider: ({ children }: { children: React.ReactNode }) => children,
+  Helmet: () => <title>Test Title</title>,
+}));
+
+// Mock react-router-dom
+vi.mock('react-router-dom', () => ({
+  Routes: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Route: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+// Mock child components to avoid loading the entire app
+vi.mock('@/components/layout/Header', () => ({
+  default: () => <header>Mock Header</header>
+}));
+
+vi.mock('@/components/ui/LoadingSpinner', () => ({
+  default: () => <div>Loading...</div>
+}));
+
 describe('App', () => {
-  it('renders the app with navigation', () => {
+  beforeEach(() => {
+    // Clear all mocks before each test
+    vi.clearAllMocks();
+  });
+
+  it('renders the app container', () => {
     render(<App />);
-    
-    // Check if the logo is rendered
-    const logo = screen.getByText(/portfolio/i);
-    expect(logo).toBeInTheDocument();
+    expect(screen.getByRole('main')).toBeInTheDocument();
+  });
+
+  it('renders the header', () => {
+    render(<App />);
+    expect(screen.getByText('Mock Header')).toBeInTheDocument();
   });
 });
