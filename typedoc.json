@@ -1,0 +1,12 @@
+{
+  "entryPoints": ["src/utils/api.ts"],
+  "out": "docs/api",
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "includeVersion": true,
+  "theme": "default",
+  "name": "Portfolio API Documentation",
+  "readme": "none",
+  "disableSources": true
+}
