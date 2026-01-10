@@ -1,62 +1,48 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Helmet } from 'react-helmet-async'
-import { HiSearch, HiFilter } from 'react-icons/hi'
-import ProjectCard from '@components/ui/ProjectCard'
-import LoadingSpinner from '@components/ui/LoadingSpinner'
-import { githubService } from '@/services/github'
+import { useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
+import { HiSearch, HiFilter } from 'react-icons/hi';
+import ProjectCard from '@components/ui/ProjectCard';
+import LoadingSpinner from '@components/ui/LoadingSpinner';
+import { useGitHubRepositories } from '@/hooks/useGitHub';
 
-export default function Projects() {
-  const [projects, setProjects] = useState([])
-  const [filteredProjects, setFilteredProjects] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedLanguage, setSelectedLanguage] = useState('')
+const Projects = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('');
+  
+  const { repositories, loading, error, refetch } = useGitHubRepositories();
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const data = await githubService.getRepositories()
-        setProjects(data)
-        setFilteredProjects(data)
-      } catch (err) {
-        setError('Failed to load projects. Please try again later.')
-        console.error('Error fetching projects:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchProjects()
-  }, [])
-
-  useEffect(() => {
-    let filtered = projects
-
+  // Filter projects based on search term and selected language
+  const filteredProjects = useMemo(() => {
+    if (!repositories) return [];
+    
+    let filtered = [...repositories];
+    
     if (searchTerm) {
+      const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
         project =>
-          project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (project.description &&
-            project.description
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase()))
-      )
+          project.name.toLowerCase().includes(term) ||
+          (project.description && project.description.toLowerCase().includes(term))
+      );
     }
-
+    
     if (selectedLanguage) {
-      filtered = filtered.filter(
-        project => project.language === selectedLanguage
-      )
+      filtered = filtered.filter(project => project.language === selectedLanguage);
     }
-
-    setFilteredProjects(filtered)
-  }, [projects, searchTerm, selectedLanguage])
-
-  const languages = [
-    ...new Set(projects.map(p => p.language).filter(Boolean)),
-  ].sort()
+    
+    return filtered;
+  }, [repositories, searchTerm, selectedLanguage]);
+  
+  // Get unique languages for filter
+  const languages = useMemo(() => {
+    if (!repositories) return [];
+    return [...new Set(repositories.map(p => p.language).filter(Boolean))].sort();
+  }, [repositories]);
+  
+  const handleRetry = () => {
+    refetch();
+  };
 
   return (
     <>
@@ -130,28 +116,27 @@ export default function Projects() {
               transition={{ delay: 0.2 }}
               className="text-gray-600 dark:text-gray-300 mb-6"
             >
-              Showing {filteredProjects.length} of {projects.length} projects
+              Showing {filteredProjects.length} of {repositories.length} projects
             </motion.p>
           )}
 
           {/* Loading State */}
-          {loading && <LoadingSpinner size="lg" />}
-
-          {/* Error State */}
-          {error && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-12"
-            >
-              <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
+          {loading && !repositories?.length ? (
+            <div className="flex justify-center py-12">
+              <LoadingSpinner />
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-500 mb-4">{error}</p>
               <button
-                onClick={() => window.location.reload()}
-                className="btn-secondary"
+                onClick={handleRetry}
+                className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
               >
                 Try Again
               </button>
-            </motion.div>
+            </div>
+          ) : (
+            <></>
           )}
 
           {/* Projects Grid */}

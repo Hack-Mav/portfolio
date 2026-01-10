@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Helmet } from 'react-helmet-async'
-import { HiArrowRight, HiDownload } from 'react-icons/hi'
-import { Link } from 'react-router-dom'
-import ProjectCard from '@components/ui/ProjectCard'
-import LoadingSpinner from '@components/ui/LoadingSpinner'
-import { githubService } from '@/services/github'
+import { useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
+import { HiArrowRight, HiDownload } from 'react-icons/hi';
+import { Link } from 'react-router-dom';
+import ProjectCard from '@components/ui/ProjectCard';
+import LoadingSpinner from '@components/ui/LoadingSpinner';
+import { useGitHubRepositories } from '@/hooks/useGitHub';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -22,30 +22,20 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 }
 
-export default function Home() {
-  const [projects, setProjects] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+const Home = () => {
+  const { repositories, loading, error, refetch } = useGitHubRepositories();
 
-  useEffect(() => {
-    const fetchFeaturedProjects = async () => {
-      try {
-        const data = await githubService.getRepositories()
-        // Get top 6 projects by stars
-        const featured = data
-          .sort((a, b) => b.stargazers_count - a.stargazers_count)
-          .slice(0, 6)
-        setProjects(featured)
-      } catch (err) {
-        setError('Failed to load projects')
-        console.error('Error fetching projects:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Get top 6 projects by stars
+  const featuredProjects = useMemo(() => {
+    if (!repositories) return [];
+    return [...repositories]
+      .sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
+      .slice(0, 6);
+  }, [repositories]);
 
-    fetchFeaturedProjects()
-  }, [])
+  const handleRetry = () => {
+    refetch();
+  };
 
   return (
     <>
@@ -112,65 +102,50 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Featured Projects Section */}
-        <section className="section-padding">
+        {/* Projects Section */}
+        <section className="section-padding bg-gray-50 dark:bg-gray-800">
           <div className="container-max">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
                 Featured Projects
               </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                A selection of my recent work showcasing different technologies
-                and approaches
-              </p>
-            </motion.div>
+              <Link
+                to="/projects"
+                className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 flex items-center"
+              >
+                View All
+                <HiArrowRight className="ml-1 w-5 h-5" />
+              </Link>
+            </div>
 
-            {loading && <LoadingSpinner size="lg" />}
-
-            {error && (
+            {loading && !repositories?.length ? (
+              <div className="flex justify-center py-12">
+                <LoadingSpinner />
+              </div>
+            ) : error ? (
               <div className="text-center py-12">
-                <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
+                <p className="text-red-500 mb-4">{error}</p>
                 <button
-                  onClick={() => window.location.reload()}
-                  className="btn-secondary"
+                  onClick={handleRetry}
+                  className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
                 >
                   Try Again
                 </button>
               </div>
-            )}
-
-            {!loading && !error && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                {projects.map((project, index) => (
-                  <ProjectCard
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {featuredProjects.map((project, index) => (
+                  <motion.div
                     key={project.id}
-                    project={project}
-                    index={index}
-                  />
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ delay: 0.1 * index }}
+                  >
+                    <ProjectCard project={project} />
+                  </motion.div>
                 ))}
               </div>
-            )}
-
-            {!loading && !error && projects.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                className="text-center"
-              >
-                <Link
-                  to="/projects"
-                  className="btn-primary inline-flex items-center"
-                >
-                  View All Projects
-                  <HiArrowRight className="w-5 h-5 ml-2" />
-                </Link>
-              </motion.div>
             )}
           </div>
         </section>

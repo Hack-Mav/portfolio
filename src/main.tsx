@@ -2,6 +2,8 @@ import React, { StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { Provider } from 'react-redux';
+import { store } from './store';
 import { registerSW } from './utils/serviceWorkerRegistration';
 import { initSentry, ErrorBoundary } from './utils/error-handler';
 import App from './App';
@@ -53,15 +55,17 @@ const LoadingSpinner = () => (
 
 const AppContainer = () => (
   <StrictMode>
-    <ErrorBoundary fallback={ErrorFallback}>
-      <Suspense fallback={<LoadingSpinner />}>
-        <HelmetProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </HelmetProvider>
-      </Suspense>
-    </ErrorBoundary>
+    <Provider store={store}>
+      <ErrorBoundary fallback={ErrorFallback}>
+        <Suspense fallback={<LoadingSpinner />}>
+          <HelmetProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </HelmetProvider>
+        </Suspense>
+      </ErrorBoundary>
+    </Provider>
   </StrictMode>
 );
 
