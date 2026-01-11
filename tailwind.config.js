@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,jsx}'],
+  content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {
@@ -8,6 +8,7 @@ export default {
         primary: {
           50: '#eff6ff',
           100: '#dbeafe',
+          200: '#bfdbfe',
           500: '#3b82f6',
           600: '#2563eb',
           700: '#1d4ed8',
@@ -27,7 +28,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Manrope', 'system-ui', 'sans-serif'],
+        heading: ['Space Grotesk', 'Manrope', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       animation: {
