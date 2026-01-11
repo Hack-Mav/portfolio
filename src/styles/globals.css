@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,7 +9,21 @@
   }
 
   body {
-    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300;
+    @apply font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300;
+    background: radial-gradient(120% 120% at 50% 0%, #f9fbff 0%, #e5edff 45%, #eff4ff 100%);
+  }
+
+  .dark body {
+    background: radial-gradient(140% 140% at 50% 0%, rgba(30, 41, 59, 1) 0%, rgba(15, 23, 42, 1) 50%, rgba(2, 6, 23, 1) 100%);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading tracking-tight text-slate-900 dark:text-white;
   }
 
   * {
@@ -27,7 +41,7 @@
   }
 
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-all duration-200 hover:shadow-md;
+    @apply bg-white/80 dark:bg-slate-900/70 backdrop-blur-lg rounded-2xl shadow-lg border border-white/60 dark:border-slate-800/80 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl;
   }
 
   .section-padding {
@@ -36,5 +50,13 @@
 
   .container-max {
     @apply max-w-7xl mx-auto;
+  }
+
+  .surface-panel {
+    @apply bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/50 dark:border-slate-800/70 rounded-2xl shadow-lg;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full bg-primary-100/70 dark:bg-primary-900/40 px-4 py-1 text-sm font-medium text-primary-700 dark:text-primary-200 uppercase tracking-[0.2em];
   }
 }

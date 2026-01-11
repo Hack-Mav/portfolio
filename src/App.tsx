@@ -2,8 +2,8 @@
 import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import Header from '@components/layout/Header';
-import LoadingSpinner from '@components/ui/LoadingSpinner';
+import Header from '@components/organisms/Header';
+import LoadingSpinner from '@components/atoms/LoadingSpinner';
 import { ROUTES } from '@/constants/routes';
 
 // Lazy load pages for better performance
