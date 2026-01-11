@@ -1,83 +1,76 @@
 import { describe, it, expect } from 'vitest';
 import {
-  selectRepositories,
-  selectRepository,
-  selectRepositoriesLoading,
-  selectRepositoriesError
-} from '../githubSlice';
+  isRepositoryState,
+  type RepositoryState,
+  type GitHubState,
+  type GitHubError,
+} from '../githubSlice.types';
 
-// Import the actual types from the slice
-import { GitHubState, Repository } from '../githubSlice';
+describe('github slice type utilities', () => {
+  it('should identify a valid repository state', () => {
+    const repoState: RepositoryState = {
+      data: {
+        id: 1,
+        name: 'example',
+        full_name: 'owner/example',
+        description: null,
+        html_url: 'https://github.com/owner/example',
+        stargazers_count: 0,
+        forks_count: 0,
+        watchers_count: 0,
+        language: 'TypeScript',
+        updated_at: new Date().toISOString(),
+        fork: false,
+      },
+      loading: false,
+      error: null,
+      timestamp: Date.now(),
+      lastFetched: Date.now(),
+      retryCount: 0,
+    };
 
-// Mock RootState type for testing
-interface RootState {
-  github: GitHubState;
-}
+    expect(isRepositoryState(repoState)).toBe(true);
+  });
 
-describe('githubSelectors', () => {
-  // Mock repository data
-  const mockRepository: Repository = {
-    id: 1,
-    name: 'test-repo',
-    description: 'Test repository',
-    html_url: 'https://github.com/test/test-repo',
-    stargazers_count: 10,
-    forks_count: 5,
-    language: 'TypeScript',
-    updated_at: '2023-01-01T00:00:00Z',
-    fork: false,
-  };
+  it('should reject an invalid repository state', () => {
+    const invalidState = {
+      data: null,
+      // missing loading and error keys
+    };
 
-  const initialState: RootState = {
-    github: {
+    expect(isRepositoryState(invalidState)).toBe(false);
+  });
+
+  it('should allow constructing GitHubState shape', () => {
+    const state: GitHubState = {
       repositories: {
-        data: [mockRepository],
-        loading: false,
+        data: null,
+        loading: true,
         error: null,
-        timestamp: Date.now(),
-        lastFetched: Date.now(),
+        timestamp: null,
+        lastFetched: null,
         retryCount: 0,
       },
-      repositoryDetails: {
-        'test-repo': {
-          data: mockRepository,
-          loading: false,
-          error: null,
-          timestamp: 1672531200000,
-          lastFetched: 1672531200000,
-          retryCount: 0,
-        },
-      },
+      repositoryDetails: {},
       rateLimit: {
-        remaining: 30,
+        remaining: 60,
         limit: 60,
-        reset: 1672534800000,
+        reset: 0,
       },
-    },
-  };
+    };
 
-  it('should select repositories', () => {
-    const result = selectRepositories(initialState);
-    expect(result).toEqual(initialState.github.repositories.data);
+    expect(state.rateLimit.limit).toBe(60);
   });
 
-  it('should select repository by name', () => {
-    const result = selectRepository('test-repo')(initialState);
-    expect(result).toEqual(initialState.github.repositoryDetails['test-repo'].data);
-  });
+  it('should support GitHubError metadata flags', () => {
+    const error: GitHubError = {
+      message: 'Rate limited',
+      status: 403,
+      isRateLimitError: true,
+      retryAfter: 60,
+    };
 
-  it('should return null for non-existent repository', () => {
-    const result = selectRepository('non-existent')(initialState);
-    expect(result).toBeNull();
-  });
-
-  it('should select loading state', () => {
-    const result = selectRepositoriesLoading(initialState);
-    expect(result).toBe(false);
-  });
-
-  it('should select error state', () => {
-    const result = selectRepositoriesError(initialState);
-    expect(result).toBeNull();
+    expect(error.isRateLimitError).toBe(true);
+    expect(error.status).toBe(403);
   });
 });

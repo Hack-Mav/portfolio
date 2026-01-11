@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import githubReducer from './slices/githubSlice';
+import { githubApi } from './api/githubApi';
 
 const store = configureStore({
   reducer: {
     github: githubReducer,
+    [githubApi.reducerPath]: githubApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -16,7 +18,7 @@ const store = configureStore({
         // Ignore these paths in the state
         ignoredPaths: ['github.repositories.timestamp', 'github.repositoryDetails.timestamp'],
       },
-    }),
+    }).concat(githubApi.middleware),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

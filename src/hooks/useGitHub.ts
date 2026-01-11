@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useMemo } from 'react';
-import { useAppDispatch, useAppSelector, RootState } from '../store';
+import { useMemo } from 'react';
 import { 
-  fetchRepositories, 
-  fetchRepository, 
-  resetRepositoriesError, 
-  resetRepositoryError 
-} from '../store/slices/githubSlice';
-import { captureException } from '../utils/error-handler';
+  useGetRepositoriesQuery,
+  useLazyGetRepositoriesQuery,
+  useGetRepositoryQuery,
+  useLazyGetRepositoryQuery,
+  selectRepositories,
+  selectRepository
+} from '../store/api/githubApi';
+import { useAppSelector } from '../store';
 
 interface UseGitHubRepositoriesResult {
   repositories: any[] | null;
@@ -14,12 +15,8 @@ interface UseGitHubRepositoriesResult {
   error: {
     message: string;
     status?: number;
-    isRateLimitError?: boolean;
-    retryAfter?: number;
-    isNetworkError?: boolean;
-    resetTime?: number;
   } | null;
-  lastUpdated: Date | null;
+  lastUpdated: number | null;
   refetch: () => void;
   retryCount: number;
   resetError: () => void;
@@ -28,65 +25,60 @@ interface UseGitHubRepositoriesResult {
 }
 
 export const useGitHubRepositories = (): UseGitHubRepositoriesResult => {
-  const dispatch = useAppDispatch();
   const { 
     data: repositories, 
-    loading, 
-    error, 
-    timestamp, 
-    retryCount,
-    lastFetched
-  } = useAppSelector((state: RootState) => ({
-    ...state.github.repositories,
-    lastFetched: state.github.repositories.lastFetched || 0,
-  }));
-
-  const isInitialLoading = loading && !repositories && !error;
-  const isRefreshing = loading && !!repositories;
-
-  const fetchData = useCallback(() => {
-    dispatch(fetchRepositories())
-      .unwrap()
-      .catch((err: Error) => {
-        // Error is already handled in the slice, but we can add additional logging if needed
-        console.error('Failed to fetch repositories:', err);
-        captureException(err, { context: 'useGitHubRepositories' });
-      });
-  }, [dispatch]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const handleRefetch = useCallback(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const handleResetError = useCallback(() => {
-    dispatch(resetRepositoriesError());
-  }, [dispatch]);
-
-  return useMemo(() => ({
-    repositories,
-    loading,
+    isLoading,
+    isFetching,
+    isError,
     error,
-    lastUpdated: timestamp ? new Date(timestamp) : null,
-    refetch: handleRefetch,
-    retryCount: retryCount || 0,
-    resetError: handleResetError,
+    refetch,
+    requestId,
+    status,
+    startedTimeStamp,
+    fulfilledTimeStamp,
+  } = useGetRepositoriesQuery(undefined, {
+    // Optional: Add any additional options like polling, refetchOnMount, etc.
+    refetchOnMountOrArgChange: true,
+  });
+
+  const isInitialLoading = status === 'pending' && !repositories && !isError;
+  const isRefreshing = isFetching && !!repositories;
+
+  // Transform the error to match the expected format
+  const transformedError = useMemo(() => {
+    if (!error) return null;
+    
+    if ('status' in error) {
+      // Handle RTK Query error
+      return {
+        message: 'data' in error ? 
+          (error.data as { message?: string })?.message || 'An error occurred' :
+          'An error occurred',
+        status: error.status,
+      };
+    }
+    
+    return {
+      message: error.message || 'An unknown error occurred',
+    };
+  }, [error]);
+
+  // RTK Query handles refetching and caching automatically
+  const resetError = () => {
+    // RTK Query handles error states internally
+  };
+
+  return {
+    repositories: repositories || null,
+    loading: isLoading,
+    error: transformedError,
+    lastUpdated: fulfilledTimeStamp || null,
+    refetch,
+    retryCount: 0, // RTK Query handles retries internally
+    resetError,
     isInitialLoading,
     isRefreshing,
-  }), [
-    repositories, 
-    loading, 
-    error, 
-    timestamp, 
-    handleRefetch, 
-    retryCount, 
-    handleResetError,
-    isInitialLoading,
-    isRefreshing,
-  ]);
+  };
 };
 
 interface UseGitHubRepositoryResult {
@@ -95,12 +87,8 @@ interface UseGitHubRepositoryResult {
   error: {
     message: string;
     status?: number;
-    isRateLimitError?: boolean;
-    retryAfter?: number;
-    isNetworkError?: boolean;
-    resetTime?: number;
   } | null;
-  lastUpdated: Date | null;
+  lastUpdated: number | null;
   refetch: () => void;
   retryCount: number;
   resetError: () => void;
@@ -109,81 +97,58 @@ interface UseGitHubRepositoryResult {
 }
 
 export const useGitHubRepository = (repoName: string): UseGitHubRepositoryResult => {
-  const dispatch = useAppDispatch();
-  
-  const {
-    data: repository,
-    loading,
+  const { 
+    data: repository, 
+    isLoading,
+    isFetching,
+    isError,
     error,
-    timestamp,
-    retryCount = 0,
-    lastFetched = 0,
-  } = useAppSelector((state: RootState) => ({
-    ...(state.github.repositoryDetails[repoName] || {
-      data: null,
-      loading: false,
-      error: null,
-      timestamp: null,
-      retryCount: 0,
-      lastFetched: 0,
-    }),
-  }));
+    refetch,
+    requestId,
+    status,
+    startedTimeStamp,
+    fulfilledTimeStamp,
+  } = useGetRepositoryQuery(repoName, {
+    skip: !repoName,
+    refetchOnMountOrArgChange: true,
+  });
 
-  const isInitialLoading = loading && !repository && !error;
-  const isRefreshing = loading && !!repository;
+  const isInitialLoading = status === 'pending' && !repository && !isError;
+  const isRefreshing = isFetching && !!repository;
 
-  const fetchData = useCallback(() => {
-    if (!repoName) return;
+  // Transform the error to match the expected format
+  const transformedError = useMemo(() => {
+    if (!error) return null;
     
-    dispatch(fetchRepository(repoName))
-      .unwrap()
-      .catch((err: Error) => {
-        // Error is already handled in the slice, but we can add additional logging if needed
-        console.error(`Failed to fetch repository ${repoName}:`, err);
-        captureException(err, { 
-          context: 'useGitHubRepository',
-          repository: repoName 
-        });
-      });
-  }, [dispatch, repoName]);
-
-  useEffect(() => {
-    if (repoName) {
-      fetchData();
+    if ('status' in error) {
+      // Handle RTK Query error
+      return {
+        message: 'data' in error ? 
+          (error.data as { message?: string })?.message || 'An error occurred' :
+          'An error occurred',
+        status: error.status,
+      };
     }
-  }, [repoName, fetchData]);
+    
+    return {
+      message: error.message || 'An unknown error occurred',
+    };
+  }, [error]);
 
-  const handleRefetch = useCallback(() => {
-    if (repoName) {
-      fetchData();
-    }
-  }, [repoName, fetchData]);
+  // RTK Query handles refetching and caching automatically
+  const resetError = () => {
+    // RTK Query handles error states internally
+  };
 
-  const handleResetError = useCallback(() => {
-    if (repoName) {
-      dispatch(resetRepositoryError(repoName));
-    }
-  }, [dispatch, repoName]);
-
-  return useMemo(() => ({
-    repository,
-    loading,
-    error,
-    lastUpdated: timestamp ? new Date(timestamp) : null,
-    refetch: handleRefetch,
-    retryCount,
-    resetError: handleResetError,
+  return {
+    repository: repository || null,
+    loading: isLoading,
+    error: transformedError,
+    lastUpdated: fulfilledTimeStamp || null,
+    refetch,
+    retryCount: 0, // RTK Query handles retries internally
+    resetError,
     isInitialLoading,
     isRefreshing,
-  }), [
-    repository, 
-    loading, 
-    error, 
-    timestamp, 
-    handleRefetch, 
-    retryCount, 
-    handleResetError,
-    isInitialLoading,
-    isRefreshing,
-  ]);
+  };
 };

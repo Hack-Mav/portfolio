@@ -1,14 +1,16 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { FaGithub, FaSearch, FaFilter, FaSync, FaExclamationTriangle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import ProjectCard from '@/components/ui/ProjectCard';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ProjectCard from '@/components/organisms/ProjectCard';
+import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useGitHubRepositories } from '@/hooks/useGitHub';
+import { useDebouncedCallback } from '@/hooks/useDebouncedCallback';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { ErrorFallback } from '@/components/ErrorBoundary';
 
 const Projects: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [languageFilter, setLanguageFilter] = useState('');
   
   const {
@@ -35,23 +37,34 @@ const Projects: React.FC = () => {
   }, [repositories]);
 
   // Filter repositories based on search term and language
+  const { invoke: applyDebouncedSearch } = useDebouncedCallback((term: string) => {
+    setDebouncedSearchTerm(term);
+  }, 300);
+
+  const handleSearchChange = useCallback((term: string) => {
+    setSearchTerm(term);
+    applyDebouncedSearch(term);
+  }, [applyDebouncedSearch]);
+
   const filteredRepos = useMemo(() => {
     if (!repositories) return [];
     
     return repositories.filter(repo => {
-      const matchesSearch = repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (repo.description && repo.description.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesSearch = repo.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        (repo.description && repo.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()));
       
       const matchesLanguage = !languageFilter || repo.language === languageFilter;
       
       return matchesSearch && matchesLanguage;
     });
-  }, [repositories, searchTerm, languageFilter]);
+  }, [repositories, debouncedSearchTerm, languageFilter]);
 
   const handleRetry = useCallback(() => {
     resetError();
     refetch();
   }, [refetch, resetError]);
+
+  const isRateLimitError = Boolean((error as { isRateLimitError?: boolean } | null)?.isRateLimitError);
 
   if (isInitialLoading) {
     return (
@@ -76,7 +89,7 @@ const Projects: React.FC = () => {
             <p className="text-sm text-red-700 mb-4">
               {error.message || 'An unexpected error occurred while fetching projects.'}
             </p>
-            {error.isRateLimitError && (
+            {isRateLimitError && (
               <p className="text-sm text-red-600 mb-4">
                 GitHub API rate limit exceeded. Please try again later.
               </p>
@@ -98,56 +111,90 @@ const Projects: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_140%_at_50%_-10%,#e8efff_0%,#f9fbff_55%,#eef3ff_100%)] dark:bg-[radial-gradient(150%_160%_at_50%_-10%,#0a1325_0%,#0f172a_40%,#020817_100%)]" />
+      <div className="absolute inset-x-0 top-10 -z-10 flex justify-center">
+        <div className="h-64 w-[60vw] rounded-full bg-primary-500/10 blur-3xl dark:bg-primary-900/20" />
+      </div>
+
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="surface-panel p-10 text-center mb-12"
+        >
+          <span className="eyebrow mb-4 mx-auto">Showcase</span>
+          <h1 className="font-heading text-4xl sm:text-5xl text-slate-900 dark:text-white mb-6">
             My Projects
           </h1>
-          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
-            A collection of my open-source projects and contributions
+          <p className="max-w-2xl mx-auto text-lg text-slate-600 dark:text-slate-300">
+            Explore a selection of experiments, tools, and production-ready builds spanning frontend polish, backend reliability, and developer experience.
           </p>
-        </div>
+        </motion.div>
 
         {/* Search and filter */}
-        <div className="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="surface-panel p-6 mb-10"
+        >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="relative flex-1">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaSearch className="h-5 w-5 text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-primary-500">
+                <FaSearch className="h-5 w-5" />
               </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Search projects..."
+                className="block w-full rounded-xl border border-white/60 dark:border-slate-700 bg-white/80 dark:bg-slate-900/50 backdrop-blur-md pl-11 pr-4 py-3 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                placeholder="Search projects, keywords, or descriptions..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
               />
             </div>
-            <div className="relative w-full md:w-64">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaFilter className="h-5 w-5 text-gray-400" />
+
+            <div className="flex flex-wrap gap-3 md:justify-end">
+              <div className="relative md:w-56 w-full">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-primary-500">
+                  <FaFilter className="h-5 w-5" />
+                </div>
+                <select
+                  className="block w-full rounded-xl border border-white/60 dark:border-slate-700 bg-white/80 dark:bg-slate-900/50 backdrop-blur-md pl-11 pr-8 py-3 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none"
+                  value={languageFilter}
+                  onChange={(e) => setLanguageFilter(e.target.value)}
+                >
+                  <option value="">All Languages</option>
+                  {languages.map((lang) => (
+                    <option key={lang} value={lang}>
+                      {lang}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500">
+                  <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                  </svg>
+                </div>
               </div>
-              <select
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm appearance-none"
-                value={languageFilter}
-                onChange={(e) => setLanguageFilter(e.target.value)}
-              >
-                <option value="">All Languages</option>
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
+
+              {(searchTerm || languageFilter) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setDebouncedSearchTerm('');
+                    setLanguageFilter('');
+                  }}
+                  className="inline-flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-primary-600 dark:text-primary-300 hover:text-primary-700 dark:hover:text-primary-200 transition-colors"
+                >
+                  <FaSync className="h-4 w-4" />
+                  Reset
+                </button>
+              )}
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Loading state during refresh */}
         {isRefreshing && (
@@ -163,27 +210,35 @@ const Projects: React.FC = () => {
             animate={{ opacity: 1 }}
             className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           >
-            {filteredRepos.map((repo) => (
+            {filteredRepos.map((repo, index) => (
               <motion.div
                 key={repo.id}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.35, delay: index * 0.05 }}
               >
-                <ProjectCard {...repo} />
+                <ProjectCard project={repo} index={index} />
               </motion.div>
             ))}
           </motion.div>
         ) : (
-          <div className="text-center py-12">
-            <FaGithub className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-lg font-medium text-gray-900">No projects found</h3>
-            <p className="mt-1 text-sm text-gray-500">
-              {searchTerm || languageFilter 
-                ? 'Try adjusting your search or filter to find what you\'re looking for.'
-                : 'No projects available at the moment.'}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="surface-panel text-center p-10"
+          >
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-500/10 text-primary-500">
+              <FaGithub className="h-7 w-7" />
+            </div>
+            <h3 className="mt-6 text-xl font-semibold text-slate-900 dark:text-white">
+              No projects found
+            </h3>
+            <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
+              {searchTerm || languageFilter
+                ? 'Try adjusting your keywords or language filters to uncover other repositories.'
+                : 'No projects available at the moment. Check back soon for new releases.'}
             </p>
-          </div>
+          </motion.div>
         )}
       </div>
     </div>
