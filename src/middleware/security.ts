@@ -32,21 +32,35 @@ export function applySecurityHeaders(
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   
   // Set CSP Header
-  res.setHeader(
-    'Content-Security-Policy',
-    `default-src 'self';
-     script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: http: 'unsafe-inline' ${
-       process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ""
-     };
-     style-src 'self' 'unsafe-inline' https:;
-     img-src 'self' data: https:;
-     font-src 'self' data:;
-     connect-src 'self' https://api.github.com;
-     frame-ancestors 'none';
-     form-action 'self';
-     base-uri 'self';
-     object-src 'none';`
-  );
+  const isDev = process.env.NODE_ENV === 'development';
+  const cspDirectives = isDev
+  ? [
+      // Development CSP - more permissive
+      "default-src 'self'",
+      `script-src 'self' 'unsafe-inline' 'unsafe-eval' http: https:`,
+      "style-src 'self' 'unsafe-inline' https:",
+      "img-src 'self' data: https:",
+      "font-src 'self' data:",
+      "connect-src 'self' https: http: ws: wss:",
+      "frame-ancestors 'none'",
+      "form-action 'self'",
+      "base-uri 'self'",
+      "object-src 'none'"
+    ]
+  : [
+      // Production CSP - more strict
+      "default-src 'self'",
+      `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`,
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https:",
+      "font-src 'self' data:",
+      "connect-src 'self' https://api.github.com",
+      "frame-ancestors 'none'",
+      "form-action 'self'",
+      "base-uri 'self'",
+      "object-src 'none'"
+    ];
+  res.setHeader('Content-Security-Policy', cspDirectives.join('; '));
   
   // Add nonce to request for later use in components
   req.headers['x-nonce'] = nonce;
