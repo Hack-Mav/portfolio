@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import ProjectCard from '@components/organisms/ProjectCard';
 import LoadingSpinner from '@components/atoms/LoadingSpinner';
 import { useGitHubRepositories } from '@/hooks/useGitHub';
-import type { Repository } from '@/store/slices/githubSlice.types';
+import type { Repository } from '@/types/github';
 
 // Extend the Variants type to include our specific structure
 type MotionVariants = Variants & {

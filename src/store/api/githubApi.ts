@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { Repository, GitHubError, GitHubRateLimit } from '../slices/githubSlice.types';
+import type { Repository, GitHubError, GitHubRateLimit } from '@/types/github';
 import type { RootState } from '../store';
 
 const GITHUB_API_URL = 'https://api.github.com';
