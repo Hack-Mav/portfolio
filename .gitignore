@@ -67,3 +67,4 @@ deployment/
 .surge.sh
 *storybook.log
 storybook-static
+bundle-analyzer.html
