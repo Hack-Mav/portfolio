@@ -68,3 +68,6 @@ deployment/
 *storybook.log
 storybook-static
 bundle-analyzer.html
+
+# Resume text file
+resume_text.txt
