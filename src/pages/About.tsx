@@ -24,24 +24,24 @@ interface Achievement {
 }
 
 const skills: Skill[] = [
-  { title: 'ReactJS', description: 'Front-End Development', icon: '⚛️' },
-  { title: 'Golang', description: 'Back-End Development', icon: '🐹' },
-  { title: 'MongoDB', description: 'Database Management', icon: '🍃' },
-  { title: 'JavaScript', description: 'Programming Language', icon: '🟨' },
-  { title: 'Node.js', description: 'Runtime Environment', icon: '🟢' },
-  { title: 'Docker', description: 'Containerization', icon: '🐳' },
+  { title: 'Golang', description: 'Concurrency-first backend services', icon: '🐹' },
+  { title: 'ReactJS', description: 'Micro frontends & module federation', icon: '⚛️' },
+  { title: 'GraphQL & REST', description: 'High-performance API design', icon: '🔗' },
+  { title: 'MySQL & MongoDB', description: 'Query tuning & data integrity', icon: '🗄️' },
+  { title: 'Google Cloud Platform', description: 'App Engine, observability, scaling', icon: '☁️' },
+  { title: 'AI Tooling', description: 'LLM-powered developer velocity', icon: '🤖' },
 ];
 
 const experiences: Experience[] = [
   {
     title: 'Full-Stack Developer',
-    company: 'Flyhigh EduTech Solutions',
-    date: 'May 2023 – Dec 2024',
+    company: 'MethodWorks Pvt. Ltd.',
+    date: 'May 2023 – Dec 2025',
     location: 'Noida, India',
     duties: [
-      'Developed end-to-end features using ReactJS and Golang',
-      'Managed MySQL and MongoDB databases, optimizing queries',
-      'Configured and deployed applications on Google Cloud Platform (GCP)',
+      'Delivered Go + React enterprise modules with decentralized identity workflows',
+      'Implemented secure REST APIs, cryptography practices, and module-federated frontends',
+      'Maintained GCP App Engine deployments with reliability, monitoring, and RBAC admin consoles',
     ],
   },
   {
@@ -58,14 +58,14 @@ const experiences: Experience[] = [
 
 const achievements: Achievement[] = [
   {
-    title: 'GATE 2022',
-    description: 'Secured 7384th Rank among 126,979 candidates',
-    icon: '🏆',
+    title: 'Quantum Computing Scholar',
+    description: 'Completed The Coding School fellowship exploring quantum circuits and algorithms.',
+    icon: '🧠',
   },
   {
-    title: 'HackerRank Badges',
-    description: 'Earned 7 badges, including 4 4-star badges',
-    icon: '⭐',
+    title: 'Open Source Mentor',
+    description: 'Guided developers on Golang, CI/CD, and scalable cloud patterns through community cohorts.',
+    icon: '🤝',
   },
 ];
 
@@ -101,7 +101,7 @@ const About: React.FC = () => {
                 Full-Stack Developer | Problem Solver | Innovator. I turn complex problems into seamless digital experiences.
               </p>
               <a
-                href="/asserts/Test_Full_Stack_Resume.pdf"
+                href="/asserts/Full_Stack_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary inline-flex items-center"

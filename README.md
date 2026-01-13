@@ -145,7 +145,7 @@ Update the following files with your information:
    - Configure the contact form to use your preferred backend service
 
 4. **Resume**
-   - Replace `/public/asserts/Test_Full_Stack_Resume.pdf` with your resume
+   - Replace `/public/asserts/Full_Stack_Resume.pdf` with your resume
    - Update any direct links to your resume in the codebase
 
 ## 🚀 Development

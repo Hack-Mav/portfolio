@@ -59,9 +59,21 @@ const itemVariants: MotionVariants = {
 };
 
 const highlightStats = [
-  { label: 'Years Experience', value: '3+', description: 'Building resilient web platforms end-to-end.' },
-  { label: 'Projects Delivered', value: '20+', description: 'From internal tools to consumer-facing products.' },
-  { label: 'Core Stack', value: 'TS · React · Go', description: 'Tightly crafted with cloud-native delivery.' },
+  {
+    label: 'Enterprise Releases',
+    value: '30+',
+    description: 'Secure modules shipped across admin consoles and enterprise SaaS.',
+  },
+  {
+    label: 'Cloud Deployments',
+    value: 'GCP · App Engine',
+    description: 'Production workloads tuned for resilience, observability, and scale.',
+  },
+  {
+    label: 'Identity & APIs',
+    value: 'DID · REST · GraphQL',
+    description: 'High-trust authentication flows and high-performance service design.',
+  },
 ];
 
 const Home: React.FC<HomeProps> = (): ReactElement => {
@@ -130,7 +142,7 @@ const Home: React.FC<HomeProps> = (): ReactElement => {
         <title>Home | Portfolio</title>
         <meta
           name="description"
-          content="Full-stack developer passionate about creating innovative web solutions"
+          content="Go and React full-stack developer delivering secure, cloud-native platforms"
         />
       </Helmet>
 
@@ -150,20 +162,20 @@ const Home: React.FC<HomeProps> = (): ReactElement => {
             >
               <div>
                 <motion.span variants={itemVariants} className="eyebrow mb-6">
-                  Full-Stack Craftsmanship
+                  Secure Cloud Engineering
                 </motion.span>
                 <motion.h1
                   variants={itemVariants}
                   className="font-heading text-4xl md:text-6xl leading-tight text-slate-900 dark:text-white mb-6"
                 >
-                  I build immersive digital products that scale with your ambition.
+                  I build resilient Go + React platforms that keep identity and data safe.
                 </motion.h1>
 
                 <motion.p
                   variants={itemVariants}
                   className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mb-10"
                 >
-                  From polished interfaces to resilient backends, I partner with teams to ship thoughtful solutions that delight users and move metrics.
+                  From decentralized identity workflows to micro-frontend delivery, I align security, performance, and developer velocity across every release.
                 </motion.p>
 
                 <motion.div
@@ -175,7 +187,7 @@ const Home: React.FC<HomeProps> = (): ReactElement => {
                     <HiArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                   <a
-                    href="/asserts/Test_Full_Stack_Resume.pdf"
+                    href="/asserts/Full_Stack_Resume.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-secondary inline-flex items-center"
@@ -215,10 +227,10 @@ const Home: React.FC<HomeProps> = (): ReactElement => {
                     Current Focus
                   </h2>
                   <p className="text-slate-600 dark:text-slate-300">
-                    Architecting modular design systems, automating CI/CD workflows, and experimenting with AI-assisted developer tooling to accelerate delivery.
+                    Orchestrating decentralized identity flows, evolving module-federated frontends, and raising reliability envelopes across GCP-backed services.
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {['Design Systems', 'Cloud Native', 'Performance'].map((tag) => (
+                    {['Decentralized Identity', 'Micro Frontends', 'Reliability Engineering'].map((tag) => (
                       <span
                         key={tag}
                         className="rounded-full bg-primary-500/10 text-primary-600 dark:text-primary-200 px-3 py-1 text-sm font-medium"

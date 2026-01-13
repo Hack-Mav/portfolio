@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { FaGithub, FaSearch, FaFilter, FaSync, FaExclamationTriangle } from 'react-icons/fa';
+import { HiArrowSmRight } from 'react-icons/hi';
 import { motion } from 'framer-motion';
 import ProjectCard from '@/components/organisms/ProjectCard';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
@@ -12,7 +13,32 @@ const Projects: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [languageFilter, setLanguageFilter] = useState('');
-  
+
+  const caseStudies = [
+    {
+      title: 'URL Shortener Application',
+      timeframe: 'Jul 2022 – Aug 2022',
+      description:
+        'Go (Golang) platform backed by Gin, Google Cloud Datastore, and Redis for high-performance redirection and analytics-ready telemetry.',
+      impact:
+        'Enabled frictionless sharing workflows with sub-20ms redirects at scale, deployed on GCP App Engine for zero-downtime rollouts.',
+      links: [
+        { label: 'GitHub Repo', href: 'https://github.com/Hack-Mav/url-shortener' },
+      ],
+    },
+    {
+      title: 'Heart Disease Monitoring System',
+      timeframe: 'Jan 2021 – Apr 2021',
+      description:
+        'Analytics pipeline applying Logistic Regression, Naive Bayes, SVM, K-NN, Decision Tree, Random Forest, and Neural Networks over medical datasets.',
+      impact:
+        'Delivered high-confidence predictions to surface probable heart disease correlations, guiding early interventions and research insights.',
+      links: [
+        { label: 'Project GitHub', href: 'https://github.com/Hack-Mav/heart-disease-monitoring' },
+      ],
+    },
+  ];
+
   const {
     repositories,
     loading,
@@ -131,6 +157,56 @@ const Projects: React.FC = () => {
           <p className="max-w-2xl mx-auto text-lg text-slate-600 dark:text-slate-300">
             Explore a selection of experiments, tools, and production-ready builds spanning frontend polish, backend reliability, and developer experience.
           </p>
+        </motion.div>
+
+        {/* Case studies directly from resume */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="surface-panel p-10 mb-12"
+        >
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+            <div>
+              <span className="eyebrow mb-4 block">Case Studies</span>
+              <h2 className="text-3xl font-heading text-slate-900 dark:text-white">
+                Spotlight Projects from the Resume
+              </h2>
+            </div>
+            <p className="text-slate-600 dark:text-slate-300 max-w-2xl">
+              Gradient of self-initiated and academic work where I fused cloud-native architecture, performance engineering,
+              and applied machine learning to solve focused problems end-to-end.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {caseStudies.map((study) => (
+              <div key={study.title} className="surface-panel border border-white/40 dark:border-slate-800 p-6 space-y-4">
+                <div>
+                  <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
+                    {study.title}
+                  </h3>
+                  <p className="text-sm text-primary-600 dark:text-primary-300">{study.timeframe}</p>
+                </div>
+                <p className="text-slate-600 dark:text-slate-300">{study.description}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">{study.impact}</p>
+                <div className="flex flex-wrap gap-3 pt-2">
+                  {study.links.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 dark:text-primary-300 hover:text-primary-700 dark:hover:text-primary-200"
+                    >
+                      {link.label}
+                      <HiArrowSmRight className="w-4 h-4" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </motion.div>
 
         {/* Search and filter */}

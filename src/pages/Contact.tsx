@@ -231,21 +231,21 @@ const Contact: React.FC = () => {
                     <ContactItem
                       icon={<HiMail className="w-6 h-6 text-primary-600 dark:text-primary-400" />}
                       title="Email"
-                      content="contact@example.com"
-                      href="mailto:contact@example.com"
+                      content="parthiv05022000@gmail.com"
+                      href="mailto:parthiv05022000@gmail.com"
                     />
                     <ContactItem
                       icon={<HiPhone className="w-6 h-6 text-primary-600 dark:text-primary-400" />}
                       title="Phone"
-                      content="+1 (555) 123-4567"
-                      href="tel:+15551234567"
+                      content="+91 95898 83958"
+                      href="tel:+919589883958"
                     />
                     <ContactItem
                       icon={
                         <HiLocationMarker className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                       }
                       title="Location"
-                      content="San Francisco, CA"
+                      content="Noida, India"
                     />
                   </div>
                 </div>
@@ -257,9 +257,9 @@ const Contact: React.FC = () => {
                   <p className="text-sm text-slate-600 dark:text-slate-300 mb-5">
                     Stay connected for project launches, write-ups, and open-source updates.
                   </p>
-                  <div className="flex space-x-4">
+                  <div className="flex flex-wrap gap-4">
                     <SocialLink
-                      href="https://github.com"
+                      href="https://github.com/Hack-Mav"
                       label="GitHub"
                       className="text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-300"
                     >
@@ -277,7 +277,7 @@ const Contact: React.FC = () => {
                       </svg>
                     </SocialLink>
                     <SocialLink
-                      href="https://linkedin.com"
+                      href="https://linkedin.com/in/parthiv-rawat"
                       label="LinkedIn"
                       className="text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-300"
                     >
@@ -291,17 +291,39 @@ const Contact: React.FC = () => {
                       </svg>
                     </SocialLink>
                     <SocialLink
-                      href="https://twitter.com"
-                      label="Twitter"
+                      href="https://auth.geeksforgeeks.org/user/parthiv05022000"
+                      label="GeeksforGeeks"
                       className="text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-300"
                     >
-                      <svg
-                        className="w-6 h-6"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2C6.486 2 2 6.486 2 12c0 4.362 2.791 8.07 6.689 9.43.489.09.667-.211.667-.47 0-.232-.009-.849-.014-1.665-2.722.591-3.296-1.313-3.296-1.313-.446-1.139-1.09-1.443-1.09-1.443-.891-.61.068-.598.068-.598 1.569.11 2.396 1.611 2.396 1.611.876 1.5 2.3 1.067 2.862.816.089-.635.342-1.067.623-1.313-2.172-.247-4.456-1.086-4.456-4.832 0-1.067.381-1.94 1.008-2.624-.1-.248-.44-1.248.096-2.6 0 0 .83-.266 2.723.998a9.45 9.45 0 012.478-.333 9.45 9.45 0 012.478.333c1.894-1.264 2.723-.998 2.723-.998.538 1.352.197 2.352.097 2.6.628.684 1.007 1.557 1.007 2.624 0 3.756-2.288 4.582-4.467 4.828.35.3.662.897.662 1.81 0 1.31-.012 2.367-.012 2.692 0 .26.178.564.672.468C19.21 20.066 22 16.36 22 12c0-5.514-4.486-10-10-10z" />
+                      </svg>
+                    </SocialLink>
+                    <SocialLink
+                      href="https://leetcode.com/Parthiv_Rawat"
+                      label="LeetCode"
+                      className="text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-300"
+                    >
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M20.4 8.7l-5.7-5.7c-.5-.5-1.2-.8-1.9-.8-.7 0-1.4.3-1.9.8l-7 7c-1 1-1.5 2.3-1.5 3.7s.5 2.7 1.5 3.7l5.7 5.7c.5.5 1.2.8 1.9.8.7 0 1.4-.3 1.9-.8l7-7c1-1 1.5-2.3 1.5-3.7s-.5-2.7-1.5-3.7zm-2 5.6l-7 7c-.3.3-.7.3-1 0l-5.7-5.7c-.6-.6-.9-1.4-.9-2.2 0-.8.3-1.6.9-2.2l7-7c.3-.3.7-.3 1 0l5.7 5.7c.6.6.9 1.4.9 2.2 0 .8-.3 1.6-.9 2.2z" />
+                      </svg>
+                    </SocialLink>
+                    <SocialLink
+                      href="https://www.hackerrank.com/parthiv05022000"
+                      label="HackerRank"
+                      className="text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-300"
+                    >
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2l9 5v10l-9 5-9-5V7l9-5zm0 2.18L5 7.5v9l7 4.32 7-4.32v-9l-7-3.32zM9.6 9.2h1.8v5.6H9.6V9.2zm5 0h1.8v5.6H14.6V9.2z" />
+                      </svg>
+                    </SocialLink>
+                    <SocialLink
+                      href="https://www.codechef.com/users/parthivrawat"
+                      label="CodeChef"
+                      className="text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-300"
+                    >
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M17.8 4.2c-.4-.7-1.2-1.2-2-1.2H8.2c-.8 0-1.5.5-1.9 1.2L4 8v3c0 1.7 1.3 3 3 3h1l-.8 3h2.1l.8-3h3.8l.8 3h2.1l-.8-3h1c1.7 0 3-1.3 3-3V8l-1.2-3.8zm-1.5 6.8c0 .6-.4 1-1 1H8.7c-.6 0-1-.4-1-1V8.5l.8-2.5h6.2l.8 2.5v2.5z" />
                       </svg>
                     </SocialLink>
                   </div>
