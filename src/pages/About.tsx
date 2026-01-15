@@ -84,6 +84,14 @@ const About: React.FC = () => {
         {/* Hero Section */}
         <section className="relative overflow-hidden pt-28 pb-20">
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_150%_at_50%_-20%,#e3edff_0%,#f4f7ff_35%,#f9fbff_60%,#f0f5ff_100%)] dark:bg-[radial-gradient(140%_160%_at_50%_-10%,#0c1424_0%,#0f172a_45%,#020817_100%)]" />
+          
+          {/* Floating Elements */}
+          <div className="absolute right-[10%] top-[25%] h-8 w-8 rounded-full bg-blue-300/30 blur-lg dark:bg-blue-400/20 floating" style={{ animationDelay: '0.5s' }} />
+          <div className="absolute left-[15%] top-[15%] h-6 w-6 rounded-full bg-indigo-300/30 blur-md dark:bg-indigo-400/20 floating" style={{ animationDelay: '1.5s' }} />
+          <div className="absolute right-[20%] bottom-[15%] h-10 w-10 rounded-full bg-purple-300/30 blur-lg dark:bg-purple-400/20 floating" style={{ animationDelay: '2s' }} />
+          <div className="absolute left-[10%] bottom-[25%] h-5 w-5 rounded-full bg-primary-300/30 blur-sm dark:bg-primary-400/20 floating" style={{ animationDelay: '3s' }} />
+          
+          {/* Background Blobs */}
           <div className="absolute right-[-15%] top-[-10%] h-72 w-72 rounded-full bg-primary-400/20 blur-3xl dark:bg-primary-500/10" />
           <div className="absolute left-[-15%] bottom-[-20%] h-80 w-80 rounded-full bg-primary-200/40 blur-3xl dark:bg-primary-900/40" />
 
@@ -114,7 +122,10 @@ const About: React.FC = () => {
         </section>
 
         {/* Mission Section */}
-        <section className="section-padding">
+        <section className="section-padding relative overflow-hidden">
+          {/* Floating Elements for Mission Section */}
+          <div className="absolute left-[5%] top-[10%] h-10 w-10 rounded-full bg-blue-300/20 blur-lg dark:bg-blue-400/10 floating" style={{ animationDelay: '0.8s' }} />
+          <div className="absolute right-[10%] top-[20%] h-6 w-6 rounded-full bg-purple-300/20 blur-md dark:bg-purple-400/10 floating" style={{ animationDelay: '1.8s' }} />
           <div className="container-max">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -134,7 +145,10 @@ const About: React.FC = () => {
         </section>
 
         {/* Skills Section */}
-        <section className="section-padding bg-white/70 dark:bg-slate-950/50">
+        <section className="section-padding bg-white/70 dark:bg-slate-950/50 relative overflow-hidden">
+          {/* Floating Elements for Skills Section */}
+          <div className="absolute right-[5%] top-[15%] h-8 w-8 rounded-full bg-indigo-300/20 blur-lg dark:bg-indigo-400/10 floating" style={{ animationDelay: '1s' }} />
+          <div className="absolute left-[10%] bottom-[15%] h-5 w-5 rounded-full bg-primary-300/20 blur-sm dark:bg-primary-400/10 floating" style={{ animationDelay: '2.2s' }} />
           <div className="container-max">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

@@ -139,9 +139,17 @@ const Projects: React.FC = () => {
   return (
     <div className="min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_140%_at_50%_-10%,#e8efff_0%,#f9fbff_55%,#eef3ff_100%)] dark:bg-[radial-gradient(150%_160%_at_50%_-10%,#0a1325_0%,#0f172a_40%,#020817_100%)]" />
+      
+      {/* Background Blobs */}
       <div className="absolute inset-x-0 top-10 -z-10 flex justify-center">
         <div className="h-64 w-[60vw] rounded-full bg-primary-500/10 blur-3xl dark:bg-primary-900/20" />
       </div>
+      
+      {/* Floating Elements */}
+      <div className="absolute left-[10%] top-[20%] h-10 w-10 rounded-full bg-blue-300/30 blur-lg dark:bg-blue-400/20 floating" style={{ animationDelay: '0.5s' }} />
+      <div className="absolute right-[15%] top-[30%] h-6 w-6 rounded-full bg-indigo-300/30 blur-md dark:bg-indigo-400/20 floating" style={{ animationDelay: '1.5s' }} />
+      <div className="absolute left-[20%] bottom-[20%] h-8 w-8 rounded-full bg-purple-300/30 blur-lg dark:bg-purple-400/20 floating" style={{ animationDelay: '2s' }} />
+      <div className="absolute right-[10%] bottom-[10%] h-5 w-5 rounded-full bg-primary-300/30 blur-sm dark:bg-primary-400/20 floating" style={{ animationDelay: '2.5s' }} />
 
       <div className="max-w-7xl mx-auto">
         <motion.div
@@ -174,13 +182,22 @@ const Projects: React.FC = () => {
               </h2>
             </div>
             <p className="text-slate-600 dark:text-slate-300 max-w-2xl">
-              Gradient of self-initiated and academic work where I fused cloud-native architecture, performance engineering,
-              and applied machine learning to solve focused problems end-to-end.
+              Gradient of self-initiated and academic work where I fused cloud-native architecture, performance engineering, and modern web technologies to deliver impactful solutions.
             </p>
           </div>
+        </motion.div>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            {caseStudies.map((study) => (
+        {/* Case Studies Section */}
+        <div className="mt-16 relative">
+          {/* Floating Elements for Case Studies */}
+          <div className="absolute left-[5%] top-[10%] h-8 w-8 rounded-full bg-indigo-300/20 blur-md dark:bg-indigo-400/10 floating" style={{ animationDelay: '0.7s' }} />
+          <div className="absolute right-[10%] bottom-[15%] h-6 w-6 rounded-full bg-blue-300/20 blur-md dark:bg-blue-400/10 floating" style={{ animationDelay: '1.7s' }} />
+          
+          <h2 className="font-heading text-3xl text-slate-900 dark:text-white mb-8 text-center">
+            Case Studies
+          </h2>
+          <div className="grid gap-8 md:grid-cols-2 relative z-10">
+            {caseStudies.map((study, index) => (
               <div key={study.title} className="surface-panel border border-white/40 dark:border-slate-800 p-6 space-y-4">
                 <div>
                   <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
@@ -207,7 +224,7 @@ const Projects: React.FC = () => {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Search and filter */}
         <motion.div

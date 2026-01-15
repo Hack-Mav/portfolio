@@ -1,6 +1,7 @@
 // src/App.tsx
 import { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import Header from '@components/organisms/Header';
 import LoadingSpinner from '@components/atoms/LoadingSpinner';
@@ -13,7 +14,20 @@ const Projects = lazy(() => import('@pages/Projects'));
 const Contact = lazy(() => import('@pages/Contact'));
 const NotFound = lazy(() => import('@pages/NotFound'));
 
+const PageTransition = ({ children }: { children: React.ReactNode }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.5, ease: 'easeInOut' }}
+    className="min-h-[calc(100vh-4rem)] w-full"
+  >
+    {children}
+  </motion.div>
+);
+
 function App() {
+  const location = useLocation();
   return (
     <>
       <Helmet>
@@ -29,13 +43,15 @@ function App() {
 
         <main>
           <Suspense fallback={<LoadingSpinner />}>
-            <Routes>
-              <Route path={ROUTES.HOME} element={<Home />} />
-              <Route path={ROUTES.ABOUT} element={<About />} />
-              <Route path={ROUTES.PROJECTS} element={<Projects />} />
-              <Route path={ROUTES.CONTACT} element={<Contact />} />
-              <Route path={ROUTES.UNDEFINED} element={<NotFound />} />
-            </Routes>
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname.split('/')[1] || 'home'}>
+                <Route path={ROUTES.HOME} element={<PageTransition><Home /></PageTransition>} />
+                <Route path={ROUTES.ABOUT} element={<PageTransition><About /></PageTransition>} />
+                <Route path={ROUTES.PROJECTS} element={<PageTransition><Projects /></PageTransition>} />
+                <Route path={ROUTES.CONTACT} element={<PageTransition><Contact /></PageTransition>} />
+                <Route path={ROUTES.UNDEFINED} element={<PageTransition><NotFound /></PageTransition>} />
+              </Routes>
+            </AnimatePresence>
           </Suspense>
         </main>
       </div>

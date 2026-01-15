@@ -110,9 +110,17 @@ const Contact: React.FC = () => {
       <div className="min-h-screen relative overflow-hidden">
         <section className="relative pt-28 pb-20">
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_160%_at_50%_-20%,#e5edff_0%,#f8fbff_55%,#eef3ff_100%)] dark:bg-[radial-gradient(150%_160%_at_50%_-20%,#070f1f_0%,#0f172a_45%,#010712_100%)]" />
+          
+          {/* Background Blobs */}
           <div className="absolute inset-x-0 top-10 -z-10 flex justify-center">
             <div className="h-64 w-[60vw] rounded-full bg-primary-500/10 blur-3xl dark:bg-primary-900/20" />
           </div>
+          
+          {/* Floating Elements */}
+          <div className="absolute left-[10%] top-[25%] h-10 w-10 rounded-full bg-blue-300/30 blur-lg dark:bg-blue-400/20 floating" style={{ animationDelay: '0.5s' }} />
+          <div className="absolute right-[15%] top-[35%] h-6 w-6 rounded-full bg-indigo-300/30 blur-md dark:bg-indigo-400/20 floating" style={{ animationDelay: '1.5s' }} />
+          <div className="absolute left-[20%] bottom-[15%] h-8 w-8 rounded-full bg-purple-300/30 blur-lg dark:bg-purple-400/20 floating" style={{ animationDelay: '2s' }} />
+          <div className="absolute right-[10%] bottom-[25%] h-5 w-5 rounded-full bg-primary-300/30 blur-sm dark:bg-primary-400/20 floating" style={{ animationDelay: '2.5s' }} />
 
           <div className="container-max">
             {/* Header */}
@@ -217,8 +225,11 @@ const Contact: React.FC = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
-                className="space-y-8"
+                className="space-y-8 relative"
               >
+                {/* Floating Elements for Contact Info */}
+                <div className="absolute -left-4 -top-4 h-6 w-6 rounded-full bg-indigo-300/20 blur-md dark:bg-indigo-400/10 floating" style={{ animationDelay: '0.7s' }} />
+                <div className="absolute -right-4 bottom-1/3 h-8 w-8 rounded-full bg-blue-300/20 blur-lg dark:bg-blue-400/10 floating" style={{ animationDelay: '1.7s' }} />
                 <div className="surface-panel p-8">
                   <h2 className="text-2xl font-heading text-slate-900 dark:text-white mb-6">
                     Contact Information
