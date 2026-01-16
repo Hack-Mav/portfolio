@@ -99,8 +99,19 @@ const Header: React.FC = () => {
             </button>
           </nav>
 
-          {/* Mobile menu button */}
-          <div className="flex items-center md:hidden">
+          {/* Mobile menu button and theme toggler */}
+          <div className="flex items-center space-x-2 md:hidden">
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-full text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {isDark ? (
+                <HiSun className="h-5 w-5" />
+              ) : (
+                <HiMoon className="h-5 w-5" />
+              )}
+            </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
@@ -146,12 +157,7 @@ const Header: React.FC = () => {
               {item.name}
             </NavLink>
           ))}
-          <button
-            onClick={toggleDarkMode}
-            className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-          >
-            {isDark ? 'Light Mode' : 'Dark Mode'}
-          </button>
+          {/* Theme toggler removed from mobile menu as it's now in the header */}
         </div>
       </motion.div>
     </motion.header>
