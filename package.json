@@ -21,6 +21,7 @@
     "docs:serve": "npx serve docs/api"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.9",
     "@reduxjs/toolkit": "^2.11.2",
     "@sentry/react": "^10.32.1",
     "@sentry/tracing": "^7.120.4",
