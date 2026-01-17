@@ -110,7 +110,7 @@ const About: React.FC = () => {
                 Full-Stack Developer | Problem Solver | Innovator. I turn complex problems into seamless digital experiences.
               </p>
               <a
-                href="/asserts/Full_Stack_Resume.pdf"
+                href="https://storage.googleapis.com/argon-magnet-442917-k1.appspot.com/public/Full_Stack_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 data-tooltip-id="about-tooltip"

@@ -195,7 +195,7 @@ const Home: React.FC<HomeProps> = (): ReactElement => {
                     <HiArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                   <a
-                    href="/asserts/Full_Stack_Resume.pdf"
+                    href="https://storage.googleapis.com/argon-magnet-442917-k1.appspot.com/public/Full_Stack_Resume.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-secondary inline-flex items-center"
