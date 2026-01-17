@@ -62,7 +62,7 @@ const pwaOptions: import('vite-plugin-pwa').VitePWAOptions = {
     ],
   },
   injectManifest: {
-    globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+    globPatterns: ['**/*.{js,css,html,ico,png,svg,pdf}'],
   },
   registerType: 'autoUpdate' as const,
   includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
@@ -113,6 +113,11 @@ export default defineConfig({
       filename: 'bundle-analyzer.html',
     }) as PluginOption,
   ],
+  publicDir: 'public',
+  preview: {
+    port: 4173,
+    host: true,
+  },
   build: {
     outDir: 'dist',
     sourcemap: true,
