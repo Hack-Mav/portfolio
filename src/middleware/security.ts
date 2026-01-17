@@ -45,7 +45,8 @@ export function applySecurityHeaders(
       "frame-ancestors 'none'",
       "form-action 'self'",
       "base-uri 'self'",
-      "object-src 'none'"
+      "object-src 'self'",
+      "media-src 'self'"
     ]
   : [
       // Production CSP - more strict
@@ -58,7 +59,8 @@ export function applySecurityHeaders(
       "frame-ancestors 'none'",
       "form-action 'self'",
       "base-uri 'self'",
-      "object-src 'none'"
+      "object-src 'self'",
+      "media-src 'self'"
     ];
   res.setHeader('Content-Security-Policy', cspDirectives.join('; '));
   
