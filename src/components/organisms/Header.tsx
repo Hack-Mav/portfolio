@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink, useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { HiMenu, HiX, HiSun, HiMoon } from 'react-icons/hi';
+import { Tooltip } from 'react-tooltip';
 import { cn } from '@/utils/cn';
 import { ROUTES } from '@/constants/routes';
 
@@ -16,6 +17,13 @@ const navigation: NavItem[] = [
   { name: 'Projects', href: ROUTES.PROJECTS },
   { name: 'Contact', href: ROUTES.CONTACT },
 ];
+
+const tooltipContent: Record<string, string> = {
+  'Home': 'Navigate to homepage',
+  'About': 'Learn more about me',
+  'Projects': 'View my portfolio projects',
+  'Contact': 'Get in touch with me',
+};
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -73,6 +81,8 @@ const Header: React.FC = () => {
               <NavLink
                 key={item.name}
                 to={item.href}
+                data-tooltip-id="header-tooltip"
+                data-tooltip-content={tooltipContent[item.name]}
                 className={({ isActive }) =>
                   cn(
                     'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 text-sm font-medium transition-colors',
@@ -88,6 +98,8 @@ const Header: React.FC = () => {
 
             <button
               onClick={toggleDarkMode}
+              data-tooltip-id="header-tooltip"
+              data-tooltip-content={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
               className="p-2 rounded-full text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
@@ -103,6 +115,8 @@ const Header: React.FC = () => {
           <div className="flex items-center space-x-2 md:hidden">
             <button
               onClick={toggleDarkMode}
+              data-tooltip-id="header-tooltip"
+              data-tooltip-content={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
               className="p-2 rounded-full text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
@@ -114,6 +128,8 @@ const Header: React.FC = () => {
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
+              data-tooltip-id="header-tooltip"
+              data-tooltip-content={isOpen ? 'Close menu' : 'Open menu'}
               className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               aria-expanded="false"
               aria-label="Toggle menu"
@@ -160,6 +176,8 @@ const Header: React.FC = () => {
           {/* Theme toggler removed from mobile menu as it's now in the header */}
         </div>
       </motion.div>
+      
+      <Tooltip id="header-tooltip" place="bottom" className="z-50" />
     </motion.header>
   );
 };
