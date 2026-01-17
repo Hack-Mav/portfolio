@@ -7,6 +7,7 @@ import {
   HiLocationMarker,
   HiPaperAirplane,
 } from 'react-icons/hi';
+import { Tooltip } from 'react-tooltip';
 
 interface FormData {
   name: string;
@@ -30,6 +31,7 @@ interface FormInputProps {
   className?: string;
   placeholder?: string;
   textarea?: boolean;
+  tooltip?: string;
 }
 
 interface ContactItemProps {
@@ -172,6 +174,7 @@ const Contact: React.FC = () => {
                       onChange={handleChange}
                       required
                       placeholder="Your name"
+                      tooltip="Enter your full name"
                     />
                     <FormInput
                       label="Email"
@@ -181,6 +184,7 @@ const Contact: React.FC = () => {
                       onChange={handleChange}
                       required
                       placeholder="your.email@example.com"
+                      tooltip="Enter your email address for response"
                     />
                   </div>
                   <FormInput
@@ -191,6 +195,7 @@ const Contact: React.FC = () => {
                     onChange={handleChange}
                     required
                     placeholder="Subject of your message"
+                    tooltip="Brief description of your message topic"
                   />
                   <FormTextArea
                     label="Message"
@@ -200,11 +205,14 @@ const Contact: React.FC = () => {
                     required
                     placeholder="Your message here..."
                     className=""
+                    tooltip="Detailed message or inquiry"
                   />
                   <div className="pt-2">
                     <button
                       type="submit"
                       disabled={isSubmitting}
+                      data-tooltip-id="contact-tooltip"
+                      data-tooltip-content="Send your message to me"
                       className="btn-primary w-full flex items-center justify-center"
                     >
                       {isSubmitting ? (
@@ -344,6 +352,8 @@ const Contact: React.FC = () => {
           </div>
         </section>
       </div>
+      
+      <Tooltip id="contact-tooltip" place="top" className="z-50" />
     </>
   );
 };
@@ -358,6 +368,7 @@ const FormInput: React.FC<FormInputProps> = ({
   className = '',
   placeholder = '',
   textarea = false,
+  tooltip = '',
 }) => {
   const inputClass = `block w-full px-4 py-2 mt-1 text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 ${className}`;
 
@@ -366,6 +377,8 @@ const FormInput: React.FC<FormInputProps> = ({
       <label
         htmlFor={name}
         className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+        data-tooltip-id="contact-tooltip"
+        data-tooltip-content={tooltip}
       >
         {label}
         {required && <span className="text-red-500">*</span>}
@@ -428,6 +441,8 @@ const SocialLink: React.FC<SocialLinkProps> = ({ href, label, className = '', ch
     aria-label={label}
     target="_blank"
     rel="noopener noreferrer"
+    data-tooltip-id="contact-tooltip"
+    data-tooltip-content={`Visit my ${label} profile`}
     className={`transition-colors ${className}`}
   >
     {children}
