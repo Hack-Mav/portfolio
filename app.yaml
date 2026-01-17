@@ -1,14 +1,16 @@
+runtime: nodejs20
+instance_class: F2
 service: default
-runtime: nodejs18  
-instance_class: F1 
 
 handlers:
-- url: /(.*\..+)$
-  static_files: build/\1
-  upload: build/(.*\..+$)
+# Serve all static files with their hashed filenames
+- url: /(.*\.(js|css|woff2|woff|ttf|eot|svg|png|jpg|jpeg|gif|ico|webp|json|pdf))$
+  static_files: dist/\1
+  upload: dist/.*\.(js|css|woff2|woff|ttf|eot|svg|png|jpg|jpeg|gif|ico|webp|json|pdf)$
+  secure: always
 
-- url: .*  
-  static_files: build/index.html
-  upload: build/index.html
-
-
+# Route all other routes to index.html for client-side routing
+- url: /(.*)
+  static_files: dist/index.html
+  upload: dist/index\.html
+  secure: always
