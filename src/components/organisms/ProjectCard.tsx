@@ -2,6 +2,7 @@ import { motion, Variants, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { HiExternalLink, HiCode, HiStar, HiEye } from 'react-icons/hi';
 import { formatDistanceToNow } from 'date-fns';
+import { Tooltip } from 'react-tooltip';
 import { cn } from '@/utils/cn';
 
 /**
@@ -106,6 +107,7 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
   const lastUpdated = formatDistanceToNow(new Date(project.updated_at), { addSuffix: true });
+  const tooltipId = `project-tooltip-${project.name.replace(/[^a-zA-Z0-9]/g, '-')}-${index}`;
   
   const { 
     name = 'Unnamed Project',
@@ -148,6 +150,8 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
                   href={homepage}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-tooltip-id={tooltipId}
+                  data-tooltip-content="View live demo"
                   className="p-1.5 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
                   aria-label="View live demo"
                   whileHover={{ scale: 1.1 }}
@@ -160,6 +164,8 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
                 href={html_url}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-tooltip-id={tooltipId}
+                data-tooltip-content="View source code on GitHub"
                 className="p-1.5 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
                 aria-label="View source code"
                 whileHover={{ scale: 1.1 }}
@@ -178,6 +184,8 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
             <div className="flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
               {language && (
                 <motion.div 
+                  data-tooltip-id={tooltipId}
+                  data-tooltip-content={`Primary language: ${language}`}
                   className="flex items-center px-2.5 py-1 rounded-full bg-gray-100 dark:bg-slate-800/50"
                   whileHover={{ scale: 1.03 }}
                 >
@@ -191,6 +199,8 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
                 </motion.div>
               )}
               <motion.div 
+                data-tooltip-id={tooltipId}
+                data-tooltip-content={`${stargazers_count} GitHub stars`}
                 className="flex items-center px-2.5 py-1 rounded-full bg-gray-100 dark:bg-slate-800/50"
                 whileHover={{ scale: 1.03 }}
               >
@@ -198,6 +208,8 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
                 <span>{stargazers_count.toLocaleString()}</span>
               </motion.div>
               <motion.div 
+                data-tooltip-id={tooltipId}
+                data-tooltip-content={`${watchers_count} watchers`}
                 className="flex items-center px-2.5 py-1 rounded-full bg-gray-100 dark:bg-slate-800/50"
                 whileHover={{ scale: 1.03 }}
               >
@@ -205,6 +217,8 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
                 <span>{watchers_count.toLocaleString()}</span>
               </motion.div>
               <motion.div 
+                data-tooltip-id={tooltipId}
+                data-tooltip-content={`${forks_count} forks`}
                 className="flex items-center px-2.5 py-1 rounded-full bg-gray-100 dark:bg-slate-800/50"
                 whileHover={{ scale: 1.03 }}
               >
@@ -224,6 +238,8 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
           </motion.div>
         </motion.div>
       </div>
+      
+      <Tooltip id={tooltipId} place="top" className="z-50" />
     </motion.article>
   );
 };
