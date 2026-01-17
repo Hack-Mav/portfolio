@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { HiDownload, HiCode, HiBriefcase, HiAcademicCap } from 'react-icons/hi';
 import React from 'react';
+import { Tooltip } from 'react-tooltip';
 
 interface Skill {
   title: string;
@@ -112,6 +113,8 @@ const About: React.FC = () => {
                 href="/asserts/Full_Stack_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
+                data-tooltip-id="about-tooltip"
+                data-tooltip-content="Download my full resume in PDF format"
                 className="btn-primary inline-flex items-center"
               >
                 <HiDownload className="w-5 h-5 mr-2" />
@@ -174,6 +177,8 @@ const About: React.FC = () => {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   className="surface-panel p-6 text-left"
+                  data-tooltip-id="about-tooltip"
+                  data-tooltip-content={skill.description}
                 >
                   <div className="text-4xl mb-4">{skill.icon}</div>
                   <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
@@ -272,6 +277,8 @@ const About: React.FC = () => {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   className="surface-panel p-8 text-left"
+                  data-tooltip-id="about-tooltip"
+                  data-tooltip-content={achievement.description}
                 >
                   <div className="flex items-center mb-4">
                     <span className="text-3xl mr-4">{achievement.icon}</span>
@@ -288,6 +295,8 @@ const About: React.FC = () => {
           </div>
         </section>
       </div>
+      
+      <Tooltip id="about-tooltip" place="top" className="z-50" />
     </>
   );
 };
