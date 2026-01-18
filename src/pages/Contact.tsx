@@ -48,6 +48,8 @@ interface SocialLinkProps {
   children: ReactNode;
 }
 
+const FORMSPREE_FORM_ID = import.meta.env.VITE_FORMSPREE_FORM_ID || 'your-form-id';
+
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -69,6 +71,16 @@ const Contact: React.FC = () => {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
+    // Check if Formspree is configured
+    if (FORMSPREE_FORM_ID === 'your-form-id') {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Form is not properly configured. Please contact the administrator.',
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     // Basic validation
     if (!formData.email.includes('@')) {
       setSubmitStatus({
@@ -80,19 +92,35 @@ const Contact: React.FC = () => {
     }
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      console.log('Form Submitted:', formData);
-      setSubmitStatus({
-        type: 'success',
-        message: "Thank you for reaching out! I'll get back to you soon.",
+      const response = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        }),
       });
-      setFormData({ name: '', email: '', subject: '', message: '' });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus({
+          type: 'success',
+          message: "Thank you for reaching out! I'll get back to you soon.",
+        });
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        throw new Error(data.error || 'Submission failed');
+      }
     } catch (error) {
       setSubmitStatus({
         type: 'error',
-        message: 'Something went wrong. Please try again.',
+        message: error instanceof Error ? error.message : 'Something went wrong. Please try again.',
       });
     } finally {
       setIsSubmitting(false);
@@ -307,42 +335,6 @@ const Contact: React.FC = () => {
                         aria-hidden="true"
                       >
                         <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                      </svg>
-                    </SocialLink>
-                    <SocialLink
-                      href="https://auth.geeksforgeeks.org/user/parthiv05022000"
-                      label="GeeksforGeeks"
-                      className="text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-300"
-                    >
-                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M12 2C6.486 2 2 6.486 2 12c0 4.362 2.791 8.07 6.689 9.43.489.09.667-.211.667-.47 0-.232-.009-.849-.014-1.665-2.722.591-3.296-1.313-3.296-1.313-.446-1.139-1.09-1.443-1.09-1.443-.891-.61.068-.598.068-.598 1.569.11 2.396 1.611 2.396 1.611.876 1.5 2.3 1.067 2.862.816.089-.635.342-1.067.623-1.313-2.172-.247-4.456-1.086-4.456-4.832 0-1.067.381-1.94 1.008-2.624-.1-.248-.44-1.248.096-2.6 0 0 .83-.266 2.723.998a9.45 9.45 0 012.478-.333 9.45 9.45 0 012.478.333c1.894-1.264 2.723-.998 2.723-.998.538 1.352.197 2.352.097 2.6.628.684 1.007 1.557 1.007 2.624 0 3.756-2.288 4.582-4.467 4.828.35.3.662.897.662 1.81 0 1.31-.012 2.367-.012 2.692 0 .26.178.564.672.468C19.21 20.066 22 16.36 22 12c0-5.514-4.486-10-10-10z" />
-                      </svg>
-                    </SocialLink>
-                    <SocialLink
-                      href="https://leetcode.com/Parthiv_Rawat"
-                      label="LeetCode"
-                      className="text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-300"
-                    >
-                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M20.4 8.7l-5.7-5.7c-.5-.5-1.2-.8-1.9-.8-.7 0-1.4.3-1.9.8l-7 7c-1 1-1.5 2.3-1.5 3.7s.5 2.7 1.5 3.7l5.7 5.7c.5.5 1.2.8 1.9.8.7 0 1.4-.3 1.9-.8l7-7c1-1 1.5-2.3 1.5-3.7s-.5-2.7-1.5-3.7zm-2 5.6l-7 7c-.3.3-.7.3-1 0l-5.7-5.7c-.6-.6-.9-1.4-.9-2.2 0-.8.3-1.6.9-2.2l7-7c.3-.3.7-.3 1 0l5.7 5.7c.6.6.9 1.4.9 2.2 0 .8-.3 1.6-.9 2.2z" />
-                      </svg>
-                    </SocialLink>
-                    <SocialLink
-                      href="https://www.hackerrank.com/parthiv05022000"
-                      label="HackerRank"
-                      className="text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-300"
-                    >
-                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M12 2l9 5v10l-9 5-9-5V7l9-5zm0 2.18L5 7.5v9l7 4.32 7-4.32v-9l-7-3.32zM9.6 9.2h1.8v5.6H9.6V9.2zm5 0h1.8v5.6H14.6V9.2z" />
-                      </svg>
-                    </SocialLink>
-                    <SocialLink
-                      href="https://www.codechef.com/users/parthivrawat"
-                      label="CodeChef"
-                      className="text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-300"
-                    >
-                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M17.8 4.2c-.4-.7-1.2-1.2-2-1.2H8.2c-.8 0-1.5.5-1.9 1.2L4 8v3c0 1.7 1.3 3 3 3h1l-.8 3h2.1l.8-3h3.8l.8 3h2.1l-.8-3h1c1.7 0 3-1.3 3-3V8l-1.2-3.8zm-1.5 6.8c0 .6-.4 1-1 1H8.7c-.6 0-1-.4-1-1V8.5l.8-2.5h6.2l.8 2.5v2.5z" />
                       </svg>
                     </SocialLink>
                   </div>
