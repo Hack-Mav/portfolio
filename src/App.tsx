@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import Header from '@components/organisms/Header';
 import LoadingSpinner from '@components/atoms/LoadingSpinner';
+import { SkipLink, FocusIndicator, Announcer } from '@components/atoms/Accessibility';
 import { ROUTES } from '@/constants/routes';
 
 // Lazy load pages for better performance
@@ -38,23 +39,37 @@ function App() {
         />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <Header />
+      <FocusIndicator>
+        {/* Skip links for keyboard navigation */}
+        <SkipLink href="#main-content">Skip to main content</SkipLink>
+        <SkipLink href="#main-navigation">Skip to navigation</SkipLink>
+        
+        {/* Screen reader announcer */}
+        <Announcer message={`Navigated to ${location.pathname}`} />
 
-        <main className="px-4 sm:px-6 lg:px-8 py-4">
-          <Suspense fallback={<LoadingSpinner />}>
-            <AnimatePresence mode="wait">
-              <Routes location={location} key={location.pathname.split('/')[1] || 'home'}>
-                <Route path={ROUTES.HOME} element={<PageTransition><Home /></PageTransition>} />
-                <Route path={ROUTES.ABOUT} element={<PageTransition><About /></PageTransition>} />
-                <Route path={ROUTES.PROJECTS} element={<PageTransition><Projects /></PageTransition>} />
-                <Route path={ROUTES.CONTACT} element={<PageTransition><Contact /></PageTransition>} />
-                <Route path={ROUTES.UNDEFINED} element={<PageTransition><NotFound /></PageTransition>} />
-              </Routes>
-            </AnimatePresence>
-          </Suspense>
-        </main>
-      </div>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+          <Header id="main-navigation" />
+
+          <main 
+            id="main-content"
+            className="px-4 sm:px-6 lg:px-8 py-4"
+            role="main"
+            tabIndex={-1}
+          >
+            <Suspense fallback={<LoadingSpinner />}>
+              <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname.split('/')[1] || 'home'}>
+                  <Route path={ROUTES.HOME} element={<PageTransition><Home /></PageTransition>} />
+                  <Route path={ROUTES.ABOUT} element={<PageTransition><About /></PageTransition>} />
+                  <Route path={ROUTES.PROJECTS} element={<PageTransition><Projects /></PageTransition>} />
+                  <Route path={ROUTES.CONTACT} element={<PageTransition><Contact /></PageTransition>} />
+                  <Route path={ROUTES.UNDEFINED} element={<PageTransition><NotFound /></PageTransition>} />
+                </Routes>
+              </AnimatePresence>
+            </Suspense>
+          </main>
+        </div>
+      </FocusIndicator>
     </>
   );
 }
