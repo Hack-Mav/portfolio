@@ -1,0 +1,356 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import LazyImage from '../LazyImage';
+
+// Mock IntersectionObserver
+const mockIntersectionObserver = vi.fn();
+mockIntersectionObserver.mockReturnValue({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+});
+window.IntersectionObserver = mockIntersectionObserver;
+
+// Create a mock store
+const createMockStore = () => {
+  return configureStore({
+    reducer: {
+      ui: () => ({
+        theme: { mode: 'light', systemPreference: 'light' },
+        notifications: { notifications: [], maxNotifications: 5 },
+        loading: { global: false, components: {} },
+        sidebar: { isOpen: false, isMobile: false },
+      }),
+      githubApi: () => ({}),
+    },
+  });
+};
+
+// Test wrapper component
+const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const store = createMockStore();
+  return (
+    <Provider store={store}>
+      <BrowserRouter>
+        {children}
+      </BrowserRouter>
+    </Provider>
+  );
+};
+
+describe('LazyImage', () => {
+  const defaultProps = {
+    src: 'https://example.com/test-image.jpg',
+    alt: 'Test image',
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renders placeholder initially', () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', expect.stringContaining('data:image/svg+xml'));
+  });
+
+  it('loads image when in view', async () => {
+    // Mock IntersectionObserver to trigger intersection
+    mockIntersectionObserver.mockImplementation((callback) => {
+      // Simulate image entering viewport
+      setTimeout(() => {
+        callback([{ isIntersecting: true, target: document.createElement('img') }]);
+      }, 100);
+      return {
+        observe: vi.fn(),
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
+      };
+    });
+
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      const img = screen.getByRole('img');
+      expect(img).toHaveAttribute('src', 'https://example.com/test-image.jpg');
+    });
+  });
+
+  it('shows error state when image fails to load', async () => {
+    // Mock image loading error
+    const mockImg = document.createElement('img');
+    Object.defineProperty(mockImg, 'naturalWidth', { value: 0 });
+    
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    
+    // Simulate error event
+    fireEvent.error(img);
+
+    await waitFor(() => {
+      expect(img).toHaveAttribute('src', expect.stringContaining('Failed to load'));
+    });
+  });
+
+  it('applies custom className', () => {
+    const customClass = 'custom-test-class';
+    
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} className={customClass} />
+      </TestWrapper>
+    );
+
+    const container = screen.getByRole('img').closest('div');
+    expect(container).toHaveClass(customClass);
+  });
+
+  it('calls onLoad callback when image loads', async () => {
+    const onLoad = vi.fn();
+
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} onLoad={onLoad} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    fireEvent.load(img);
+
+    expect(onLoad).toHaveBeenCalled();
+  });
+
+  it('calls onError callback when image fails', async () => {
+    const onError = vi.fn();
+
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} onError={onError} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    fireEvent.error(img);
+
+    expect(onError).toHaveBeenCalled();
+  });
+
+  it('uses custom placeholder', () => {
+    const customPlaceholder = 'https://example.com/placeholder.jpg';
+    
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} placeholder={customPlaceholder} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    expect(img).toHaveAttribute('src', customPlaceholder);
+  });
+
+  it('respects threshold option', () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} threshold={0.5} />
+      </TestWrapper>
+    );
+
+    expect(mockIntersectionObserver).toHaveBeenCalledWith(
+      expect.any(Function),
+      expect.objectContaining({ threshold: 0.5 })
+    );
+  });
+
+  it('respects rootMargin option', () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} rootMargin="100px" />
+      </TestWrapper>
+    );
+
+    expect(mockIntersectionObserver).toHaveBeenCalledWith(
+      expect.any(Function),
+      expect.objectContaining({ rootMargin: '100px' })
+    );
+  });
+
+  it('shows loading skeleton initially', () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    const skeleton = screen.getByRole('img').closest('div')?.querySelector('.animate-pulse');
+    expect(skeleton).toBeInTheDocument();
+  });
+
+  it('removes loading skeleton after load', async () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    fireEvent.load(img);
+
+    await waitFor(() => {
+      const skeleton = screen.getByRole('img').closest('div')?.querySelector('.animate-pulse');
+      expect(skeleton).not.toBeInTheDocument();
+    });
+  });
+
+  it('has proper alt text', () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    expect(img).toHaveAttribute('alt', 'Test image');
+  });
+
+  it('passes through other img props', () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} width={100} height={200} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    expect(img).toHaveAttribute('width', '100');
+    expect(img).toHaveAttribute('height', '200');
+  });
+
+  it('handles empty src gracefully', () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} src="" />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    expect(img).toBeInTheDocument();
+  });
+
+  it('handles missing alt text', () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} alt="" />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    expect(img).toHaveAttribute('alt', '');
+  });
+
+  it('applies blur effect during loading', () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    expect(img).toHaveClass('opacity-75', 'blur-sm');
+  });
+
+  it('removes blur effect after load', async () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    fireEvent.load(img);
+
+    await waitFor(() => {
+      expect(img).toHaveClass('opacity-100', 'blur-0');
+    });
+  });
+
+  it('shows error indicator when image fails', async () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    fireEvent.error(img);
+
+    await waitFor(() => {
+      const errorIndicator = screen.getByText('Failed to load image');
+      expect(errorIndicator).toBeInTheDocument();
+    });
+  });
+
+  it('is accessible via keyboard', () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    img.focus();
+    expect(img).toHaveFocus();
+  });
+
+  it('has proper ARIA attributes', () => {
+    render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    const img = screen.getByRole('img');
+    expect(img).toHaveAttribute('alt', 'Test image');
+  });
+
+  it('handles multiple images correctly', () => {
+    const { rerender } = render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+        <LazyImage src="https://example.com/image2.jpg" alt="Second image" />
+      </TestWrapper>
+    );
+
+    const images = screen.getAllByRole('img');
+    expect(images).toHaveLength(2);
+  });
+
+  it('cleans up IntersectionObserver on unmount', () => {
+    const { unmount } = render(
+      <TestWrapper>
+        <LazyImage {...defaultProps} />
+      </TestWrapper>
+    );
+
+    const mockDisconnect = mockIntersectionObserver.mock.results[0]?.value?.disconnect;
+    unmount();
+
+    expect(mockDisconnect).toHaveBeenCalled();
+  });
+});

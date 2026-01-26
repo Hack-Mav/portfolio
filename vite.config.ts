@@ -41,7 +41,7 @@ const pwaOptions: import('vite-plugin-pwa').VitePWAOptions = {
   injectRegister: 'auto',
   minify: true,
   includeManifestIcons: true,
-  disable: process.env.NODE_ENV !== 'production',
+  disable: true,
   // Manifest generation
   manifest: {
     name: 'My Portfolio',
@@ -121,24 +121,58 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    // Enable better tree-shaking
+    target: 'esnext',
     rollupOptions: {
       output: {
         manualChunks: {
+          // Separate vendor chunks for better caching
           react: ['react', 'react-dom', 'react-router-dom'],
-          vendor: ['framer-motion', 'axios'],
-          icons: ['react-icons'],
+          'react-redux': ['@reduxjs/toolkit', 'react-redux'],
+          'react-icons': ['react-icons/hi', 'react-icons/fa'],
+          'framer-motion': ['framer-motion'],
+          'utils': ['date-fns', 'clsx', 'tailwind-merge'],
+        },
+        // Optimize chunk naming for better caching
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
+          return `js/[name]-[hash].js`;
+        },
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name?.split('.') || [];
+          const extType = info[info.length - 1];
+          if (/\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/i.test(assetInfo.name || '')) {
+            return `media/[name]-[hash][extname]`;
+          }
+          if (/\.(png|jpe?g|gif|svg|webp|avif)(\?.*)?$/i.test(assetInfo.name || '')) {
+            return `images/[name]-[hash][extname]`;
+          }
+          if (/\.(woff2?|eot|ttf|otf)(\?.*)?$/i.test(assetInfo.name || '')) {
+            return `fonts/[name]-[hash][extname]`;
+          }
+          return `assets/[name]-[hash][extname]`;
         },
       },
+      // External dependencies that shouldn't be bundled
+      external: [],
     },
-    chunkSizeWarningLimit: 1000,
-    // 1MB
+    chunkSizeWarningLimit: 1000, // 1MB
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
+        // Remove unused code
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+      },
+      mangle: {
+        // Keep class names for debugging in production
+        keep_classnames: false,
+        keep_fnames: false,
       },
     },
+    // Enable CSS code splitting
+    cssCodeSplit: true,
   },
   resolve: {
     alias: {
@@ -152,6 +186,32 @@ export default defineConfig({
       '@styles': path.resolve(__dirname, './src/styles'),
       '@types': path.resolve(__dirname, './src/types'),
       '@constants': path.resolve(__dirname, './src/constants'),
+    },
+  },
+  optimizeDeps: {
+    // Pre-bundle dependencies for faster development
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      '@reduxjs/toolkit',
+      'react-redux',
+      'framer-motion',
+      'react-icons/hi',
+      'react-icons/fa',
+    ],
+    // Exclude dependencies from pre-bundling
+    exclude: [],
+  },
+  define: {
+    // Global constants for better tree-shaking
+    __DEV__: process.env.NODE_ENV === 'development',
+    __PROD__: process.env.NODE_ENV === 'production',
+  },
+  server: {
+    fs: {
+      // Allow serving files from one level up
+      allow: ['..'],
     },
   },
   test: {

@@ -25,7 +25,7 @@ const tooltipContent: Record<string, string> = {
   'Contact': 'Get in touch with me',
 };
 
-const Header: React.FC = () => {
+const Header: React.FC<{ id?: string }> = ({ id }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
@@ -59,6 +59,8 @@ const Header: React.FC = () => {
 
   return (
     <motion.header
+      id={id}
+      role="banner"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}

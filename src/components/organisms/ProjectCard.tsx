@@ -1,5 +1,5 @@
 import { motion, Variants, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, memo } from 'react';
 import { HiExternalLink, HiCode, HiStar, HiEye } from 'react-icons/hi';
 import { formatDistanceToNow } from 'date-fns';
 import { Tooltip } from 'react-tooltip';
@@ -244,4 +244,21 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
   );
 };
 
-export default ProjectCard;
+// Custom comparison function for React.memo
+const arePropsEqual = (prevProps: ProjectCardProps, nextProps: ProjectCardProps) => {
+  // Only re-render if the project data or index has changed
+  return (
+    prevProps.index === nextProps.index &&
+    prevProps.project.name === nextProps.project.name &&
+    prevProps.project.description === nextProps.project.description &&
+    prevProps.project.html_url === nextProps.project.html_url &&
+    prevProps.project.homepage === nextProps.project.homepage &&
+    prevProps.project.stargazers_count === nextProps.project.stargazers_count &&
+    prevProps.project.forks_count === nextProps.project.forks_count &&
+    prevProps.project.watchers_count === nextProps.project.watchers_count &&
+    prevProps.project.language === nextProps.project.language &&
+    prevProps.project.updated_at === nextProps.project.updated_at
+  );
+};
+
+export default memo(ProjectCard, arePropsEqual);
