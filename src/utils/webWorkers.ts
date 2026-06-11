@@ -21,7 +21,7 @@ export class WorkerManager {
     const worker = new Worker(scriptPath);
     
     worker.onmessage = (event) => {
-      const { type, result, error, taskId } = event.data;
+      const { type: _type, result, error, taskId } = event.data;
       
       if (taskId && this.pendingTasks.has(taskId)) {
         const { resolve, reject } = this.pendingTasks.get(taskId)!;

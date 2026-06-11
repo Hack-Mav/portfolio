@@ -20,7 +20,7 @@ class CacheManager {
       localStorage.setItem(testKey, testKey);
       localStorage.removeItem(testKey);
       return true;
-    } catch (e) {
+    } catch {
       console.warn('localStorage is not available, using in-memory cache only');
       return false;
     }
@@ -119,7 +119,7 @@ class CacheManager {
                   stats.expired++;
                 }
               }
-            } catch (e) {
+            } catch {
               // Ignore invalid cache entries
             }
           }

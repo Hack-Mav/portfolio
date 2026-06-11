@@ -16,7 +16,7 @@ const api: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-interface CSRFConfig {
+interface _CSRFConfig {
   csrfToken?: string;
   skipCSRF?: boolean;
 }

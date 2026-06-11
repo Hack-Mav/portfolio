@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { Repository, GitHubError, GitHubRateLimit } from '@/types/github';
+import type { Repository, GitHubError as _GitHubError, GitHubRateLimit as _GitHubRateLimit } from '@/types/github';
 import type { RootState } from '../store';
 
 const GITHUB_API_URL = 'https://api.github.com';
@@ -31,14 +31,14 @@ export const githubApi = createApi({
       query: () => `users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100`,
       providesTags: ['Repositories'],
       transformResponse: (response: Repository[]) => response,
-      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (_, { dispatch: _dispatch, queryFulfilled }) => {
         try {
           const { data } = await queryFulfilled;
           // Update rate limit information if available
           if (data && 'meta' in data) {
             const meta = data.meta as CustomMeta;
             const headers = meta?.response?.headers;
-            const rateLimit = {
+            const _rateLimit = {
               remaining: parseInt(headers?.get('x-ratelimit-remaining') || '60', 10),
               limit: parseInt(headers?.get('x-ratelimit-limit') || '60', 10),
               reset: parseInt(headers?.get('x-ratelimit-reset') || '0', 10),
