@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ModalProps {
@@ -166,7 +166,8 @@ export const FormField: React.FC<FormFieldProps> = ({
   rows = 4,
   className = '',
 }) => {
-  const fieldId = id || `field-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const fieldId = id || `field-${generatedId}`;
   const errorId = `${fieldId}-error`;
   const helpId = `${fieldId}-help`;
 

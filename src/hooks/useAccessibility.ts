@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /**
  * Custom hook for managing focus within a container
@@ -83,17 +83,17 @@ export function useKeyboardNavigation(
     activateOnSpace = true,
   } = options;
 
-  const selectedIndexRef = useRef<number>(-1);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   const handleKeyDown = (e: KeyboardEvent) => {
     const { key } = e;
-    let newIndex = selectedIndexRef.current;
+    let newIndex = selectedIndex;
 
     switch (key) {
       case 'ArrowDown':
       case 'ArrowRight':
         e.preventDefault();
-        newIndex = selectedIndexRef.current + 1;
+        newIndex = selectedIndex + 1;
         if (newIndex >= items.length) {
           newIndex = loop ? 0 : items.length - 1;
         }
@@ -102,7 +102,7 @@ export function useKeyboardNavigation(
       case 'ArrowUp':
       case 'ArrowLeft':
         e.preventDefault();
-        newIndex = selectedIndexRef.current - 1;
+        newIndex = selectedIndex - 1;
         if (newIndex < 0) {
           newIndex = loop ? items.length - 1 : 0;
         }
@@ -119,16 +119,16 @@ export function useKeyboardNavigation(
         break;
 
       case 'Enter':
-        if (activateOnEnter && selectedIndexRef.current >= 0) {
+        if (activateOnEnter && selectedIndex >= 0) {
           e.preventDefault();
-          onSelect?.(selectedIndexRef.current);
+          onSelect?.(selectedIndex);
         }
         return;
 
       case ' ':
-        if (activateOnSpace && selectedIndexRef.current >= 0) {
+        if (activateOnSpace && selectedIndex >= 0) {
           e.preventDefault();
-          onSelect?.(selectedIndexRef.current);
+          onSelect?.(selectedIndex);
         }
         return;
 
@@ -137,23 +137,16 @@ export function useKeyboardNavigation(
     }
 
     // Update selected index and focus
-    if (newIndex !== selectedIndexRef.current && items?.[newIndex]) {
-      selectedIndexRef.current = newIndex;
+    if (newIndex !== selectedIndex && items?.[newIndex]) {
+      setSelectedIndex(newIndex);
       items[newIndex]!.focus();
-    }
-  };
-
-  const setSelectedIndex = (index: number) => {
-    selectedIndexRef.current = index;
-    if (items?.[index]) {
-      items[index]!.focus();
     }
   };
 
   return {
     handleKeyDown,
     setSelectedIndex,
-    selectedIndex: selectedIndexRef.current,
+    selectedIndex,
   };
 }
 

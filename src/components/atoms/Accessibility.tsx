@@ -258,17 +258,30 @@ export const Announcer: React.FC<AnnouncerProps> = ({
   timeout = 1000 
 }) => {
   const [announcement, setAnnouncement] = useState('');
+  const prevMessageRef = useRef(message);
+  const updateAnnouncementRef = useRef(false);
 
   useEffect(() => {
-    if (message) {
-      setAnnouncement(message);
+    if (message !== prevMessageRef.current) {
+      prevMessageRef.current = message;
+      updateAnnouncementRef.current = true;
+    }
+  }, [message]);
+
+  useEffect(() => {
+    if (updateAnnouncementRef.current) {
+      updateAnnouncementRef.current = false;
+      // Defer setState to avoid synchronous call in effect
+      setTimeout(() => {
+        setAnnouncement(prevMessageRef.current);
+      }, 0);
       const timer = setTimeout(() => {
         setAnnouncement('');
       }, timeout);
 
       return () => clearTimeout(timer);
     }
-  }, [message, timeout]);
+  }, [timeout]);
 
   return (
     <div
@@ -317,12 +330,6 @@ export const FocusIndicator: React.FC<FocusIndicatorProps> = ({
   return (
     <div className={className}>
       {children}
-      <style jsx>{`
-        .keyboard-navigation *:focus {
-          outline: 2px solid #3b82f6 !important;
-          outline-offset: 2px !important;
-        }
-      `}</style>
     </div>
   );
 };

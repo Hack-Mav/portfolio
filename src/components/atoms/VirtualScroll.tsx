@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 
 interface VirtualScrollProps {
   items: any[];
@@ -24,7 +24,7 @@ export const VirtualScroll: React.FC<VirtualScrollProps> = ({
   containerHeight,
   renderItem,
   overscan = 5,
-  className = '',
+  className: _className = '',
 }) => {
   const [scrollTop, setScrollTop] = useState(0);
   const scrollElementRef = useRef<HTMLDivElement>(null);
@@ -63,7 +63,7 @@ export const VirtualScroll: React.FC<VirtualScrollProps> = ({
   return (
     <div
       ref={scrollElementRef}
-      className={`overflow-auto ${className}`}
+      className={`overflow-auto ${_className}`}
       style={{ height: containerHeight }}
       onScroll={handleScroll}
     >

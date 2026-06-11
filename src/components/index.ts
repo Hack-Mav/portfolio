@@ -15,5 +15,3 @@ export * from './pages';
 
 // Error Boundaries
 export { default as AppErrorBoundary } from './AppErrorBoundary';
-export { default as CustomErrorBoundary } from './CustomErrorBoundary';
-export { default as ErrorBoundary } from './ErrorBoundary';
