@@ -27,17 +27,17 @@ type MotionVariants = Variants & {
 };
 
 // Props for the Home component
-interface HomeProps {
+interface _HomeProps {
   // Add any props if needed in the future
 }
 
 // Type for the featured projects section
-interface FeaturedProjectsSectionProps {
+interface _FeaturedProjectsSectionProps {
   projects: Repository[];
 }
 
 // Type for the hero section
-interface HeroSectionProps {
+interface _HeroSectionProps {
   onViewWork: () => void;
 }
 
@@ -76,7 +76,7 @@ const highlightStats = [
   },
 ];
 
-const Home: React.FC<HomeProps> = (): ReactElement => {
+const Home: React.FC<_HomeProps> = (): ReactElement => {
   const { 
     repositories, 
     loading, 
@@ -130,7 +130,7 @@ const Home: React.FC<HomeProps> = (): ReactElement => {
     );
   }
 
-  const handleViewWork = (): void => {
+  const _handleViewWork = (): void => {
     // Handle view work action if needed
     console.log('View work clicked');
   };

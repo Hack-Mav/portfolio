@@ -6,8 +6,7 @@ import ProjectCard from '@/components/organisms/ProjectCard';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner';
 import { useGitHubRepositories } from '@/hooks/useGitHub';
 import { useDebouncedCallback } from '@/hooks/useDebouncedCallback';
-import ErrorBoundary from '@/components/ErrorBoundary';
-import { ErrorFallback } from '@/components/ErrorBoundary';
+import AppErrorBoundary from '@/components/AppErrorBoundary';
 
 const Projects: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -41,7 +40,7 @@ const Projects: React.FC = () => {
 
   const {
     repositories,
-    loading,
+    loading: _loading,
     error,
     isInitialLoading,
     isRefreshing,
@@ -197,7 +196,7 @@ const Projects: React.FC = () => {
             Case Studies
           </h2>
           <div className="grid gap-8 md:grid-cols-2 relative z-10">
-            {caseStudies.map((study, index) => (
+            {caseStudies.map((study, _index) => (
               <div key={study.title} className="surface-panel border border-white/40 dark:border-slate-800 p-6 space-y-4">
                 <div>
                   <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
@@ -338,20 +337,42 @@ const Projects: React.FC = () => {
   );
 };
 
-// Wrap the component with ErrorBoundary
-export default () => {
-  const errorFallback = (error: Error, resetError: () => void) => (
-    <ErrorFallback error={error} resetError={resetError} />
+// Wrap the component with AppErrorBoundary
+const ProjectsWithErrorBoundary = () => {
+  const errorFallback = ({ error, resetError }: { error: Error; componentStack: string | null; resetError: () => void }) => (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-md w-full p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-red-600 mb-4">Oops! Something went wrong</h2>
+        <p className="text-gray-700 dark:text-gray-300 mb-4">
+          We're sorry, but an error occurred while loading the projects.
+        </p>
+        {process.env.NODE_ENV === 'development' && (
+          <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded mb-4">
+            <p className="text-sm text-red-700 dark:text-red-400 font-mono">{error.message}</p>
+          </div>
+        )}
+        <button
+          onClick={resetError}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
   );
 
   return (
-    <ErrorBoundary 
+    <AppErrorBoundary 
       fallback={errorFallback}
       onError={(error, errorInfo) => {
         console.error('Error in Projects component:', error, errorInfo);
       }}
     >
       <Projects />
-    </ErrorBoundary>
+    </AppErrorBoundary>
   );
 };
+
+ProjectsWithErrorBoundary.displayName = 'ProjectsWithErrorBoundary';
+
+export default ProjectsWithErrorBoundary;

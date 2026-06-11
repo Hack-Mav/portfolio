@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { HiDownload, HiCode, HiBriefcase, HiAcademicCap } from 'react-icons/hi';
+import { HiDownload } from 'react-icons/hi';
 import React from 'react';
 import { Tooltip } from 'react-tooltip';
 
