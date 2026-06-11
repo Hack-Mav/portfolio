@@ -1,0 +1,106 @@
+[
+  {
+    "id": "prompt-1",
+    "title": "React Component Generator",
+    "category": "coding",
+    "description": "Generate a React component with TypeScript and Tailwind CSS",
+    "template": "Create a React component called {{componentName}} that:\n\n{{requirements}}\n\nRequirements:\n- Use TypeScript\n- Use Tailwind CSS for styling\n- Include proper prop types\n- Add accessibility attributes\n- Include error handling",
+    "variables": [
+      {
+        "name": "componentName",
+        "description": "Name of the component",
+        "defaultValue": "MyComponent"
+      },
+      {
+        "name": "requirements",
+        "description": "List of component requirements",
+        "defaultValue": "- Display a list of items\n- Support filtering\n- Include loading state"
+      }
+    ],
+    "tags": ["react", "typescript", "tailwind", "component"],
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "prompt-2",
+    "title": "API Documentation Writer",
+    "category": "writing",
+    "description": "Generate comprehensive API documentation",
+    "template": "Write API documentation for {{endpointName}}:\n\nEndpoint: {{endpointPath}}\nMethod: {{method}}\n\n{{description}}\n\nInclude:\n- Overview\n- Request parameters\n- Response format\n- Error codes\n- Example usage\n- Rate limiting information",
+    "variables": [
+      {
+        "name": "endpointName",
+        "description": "Name of the API endpoint",
+        "defaultValue": "User Authentication"
+      },
+      {
+        "name": "endpointPath",
+        "description": "API endpoint path",
+        "defaultValue": "/api/auth/login"
+      },
+      {
+        "name": "method",
+        "description": "HTTP method",
+        "defaultValue": "POST"
+      },
+      {
+        "name": "description",
+        "description": "Detailed description of the endpoint",
+        "defaultValue": "Authenticates a user with email and password credentials"
+      }
+    ],
+    "tags": ["api", "documentation", "technical-writing"],
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "prompt-3",
+    "title": "Code Review Assistant",
+    "category": "coding",
+    "description": "Generate a comprehensive code review",
+    "template": "Review the following code:\n\n```{{language}}\n{{code}}\n```\n\nProvide feedback on:\n1. Code quality and readability\n2. Performance considerations\n3. Security vulnerabilities\n4. Best practices\n5. Potential bugs\n6. Suggestions for improvement\n\nBe constructive and specific with your feedback.",
+    "variables": [
+      {
+        "name": "language",
+        "description": "Programming language",
+        "defaultValue": "typescript"
+      },
+      {
+        "name": "code",
+        "description": "Code to review",
+        "defaultValue": "// Paste your code here"
+      }
+    ],
+    "tags": ["code-review", "quality", "best-practices"],
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "prompt-4",
+    "title": "Blog Post Outline",
+    "category": "writing",
+    "description": "Generate a structured blog post outline",
+    "template": "Create a blog post outline for: {{topic}}\n\nTarget audience: {{audience}}\nTone: {{tone}}\n\nStructure:\n1. Compelling title suggestions\n2. Introduction hook\n3. Main sections (3-5 key points)\n4. Supporting examples or data\n5. Conclusion with call-to-action\n6. SEO keywords to include\n\nEstimated reading time: {{readTime}} minutes",
+    "variables": [
+      {
+        "name": "topic",
+        "description": "Blog post topic",
+        "defaultValue": "Modern Web Development Practices"
+      },
+      {
+        "name": "audience",
+        "description": "Target audience",
+        "defaultValue": "Junior to mid-level developers"
+      },
+      {
+        "name": "tone",
+        "description": "Writing tone",
+        "defaultValue": "Professional and educational"
+      },
+      {
+        "name": "readTime",
+        "description": "Estimated reading time in minutes",
+        "defaultValue": "5"
+      }
+    ],
+    "tags": ["blog", "content", "outline"],
+    "createdAt": "2024-01-01T00:00:00Z"
+  }
+]

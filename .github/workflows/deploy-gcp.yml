@@ -1,0 +1,72 @@
+name: Deploy to GCP App Engine
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run type checking
+        run: npm run typecheck
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test:ci
+        env:
+          CI: true
+          NODE_ENV: test
+          VITE_SENTRY_DSN: ""
+
+      - name: Build application
+        run: npm run build
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Deploy to App Engine
+        uses: google-github-actions/deploy-appengine@v2
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          deliverables: app.yaml
+          version: ${{ github.sha }}
+          promote: true
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+
+      - name: Create Sentry release
+        uses: getsentry/action-release@v2
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG || 'your-org-name' }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT || 'your-project-name' }}
+        with:
+          environment: production
+          sourcemaps: 'dist/'
+          sourcemaps_path: '~/'
+          finalize: true
+          deploy_started: true
+          projects: ${{ vars.SENTRY_PROJECT || 'your-project-name' }}
+          version: ${{ github.sha }}

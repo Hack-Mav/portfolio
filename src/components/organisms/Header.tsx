@@ -15,6 +15,10 @@ const navigation: NavItem[] = [
   { name: 'Home', href: ROUTES.HOME },
   { name: 'About', href: ROUTES.ABOUT },
   { name: 'Projects', href: ROUTES.PROJECTS },
+  { name: 'Blogs', href: ROUTES.BLOGS },
+  { name: 'CAD', href: ROUTES.CAD },
+  { name: 'Libraries', href: ROUTES.LIBRARIES },
+  { name: 'Prompts', href: ROUTES.PROMPTS },
   { name: 'Contact', href: ROUTES.CONTACT },
 ];
 
@@ -22,6 +26,10 @@ const tooltipContent: Record<string, string> = {
   'Home': 'Navigate to homepage',
   'About': 'Learn more about me',
   'Projects': 'View my portfolio projects',
+  'Blogs': 'Read my blog articles',
+  'CAD': 'View CAD 3D models',
+  'Libraries': 'Explore my npm packages',
+  'Prompts': 'View prompt templates',
   'Contact': 'Get in touch with me',
 };
 
@@ -45,7 +53,12 @@ const Header: React.FC<{ id?: string }> = ({ id }) => {
     location.pathname !== ROUTES.HOME &&
     location.pathname !== ROUTES.ABOUT &&
     location.pathname !== ROUTES.PROJECTS &&
-    location.pathname !== ROUTES.CONTACT
+    location.pathname !== ROUTES.CONTACT &&
+    location.pathname !== ROUTES.BLOGS &&
+    location.pathname !== ROUTES.CAD &&
+    location.pathname !== ROUTES.LIBRARIES &&
+    location.pathname !== ROUTES.PROMPTS &&
+    !location.pathname.startsWith(ROUTES.BLOG_DETAIL.split('/:')[0] || '/blogs')
   ) {
     return null;
   }

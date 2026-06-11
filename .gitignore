@@ -55,6 +55,22 @@ pnpm-debug.log*
 # Misc
 .DS_Store
 *.pem
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!vite.config.ts
+!vitest.config.ts
+!tailwind.config.js
+!postcss.config.js
+!typedoc.json
+!.eslintrc.json
+!.prettierrc
+!babel.config.json
+!src/data/*.json
+
+# GCP Service Account Key
+gcp-sa-key.json
 
 # Vite
 .history/

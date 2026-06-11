@@ -1,0 +1,8 @@
+[
+  {
+    "packageName": "@your-org/package-name",
+    "githubRepo": "https://github.com/Hack-Mav/package-name",
+    "category": "utilities",
+    "featured": true
+  }
+]

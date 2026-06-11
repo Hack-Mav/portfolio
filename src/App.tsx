@@ -13,6 +13,11 @@ const Home = lazy(() => import('@pages/Home'));
 const About = lazy(() => import('@pages/About'));
 const Projects = lazy(() => import('@pages/Projects'));
 const Contact = lazy(() => import('@pages/Contact'));
+const Blogs = lazy(() => import('@pages/Blogs'));
+const BlogDetail = lazy(() => import('@pages/BlogDetail'));
+const CAD = lazy(() => import('@pages/CAD'));
+const Libraries = lazy(() => import('@pages/Libraries'));
+const Prompts = lazy(() => import('@pages/Prompts'));
 const NotFound = lazy(() => import('@pages/NotFound'));
 
 const PageTransition = ({ children }: { children: React.ReactNode }) => (
@@ -63,6 +68,11 @@ function App() {
                   <Route path={ROUTES.ABOUT} element={<PageTransition><About /></PageTransition>} />
                   <Route path={ROUTES.PROJECTS} element={<PageTransition><Projects /></PageTransition>} />
                   <Route path={ROUTES.CONTACT} element={<PageTransition><Contact /></PageTransition>} />
+                  <Route path={ROUTES.BLOGS} element={<PageTransition><Blogs /></PageTransition>} />
+                  <Route path={ROUTES.BLOG_DETAIL} element={<PageTransition><BlogDetail /></PageTransition>} />
+                  <Route path={ROUTES.CAD} element={<PageTransition><CAD /></PageTransition>} />
+                  <Route path={ROUTES.LIBRARIES} element={<PageTransition><Libraries /></PageTransition>} />
+                  <Route path={ROUTES.PROMPTS} element={<PageTransition><Prompts /></PageTransition>} />
                   <Route path={ROUTES.UNDEFINED} element={<PageTransition><NotFound /></PageTransition>} />
                 </Routes>
               </AnimatePresence>
