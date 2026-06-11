@@ -3,20 +3,23 @@ self.onmessage = function(e) {
   const { type, data } = e.data;
   
   switch (type) {
-    case 'FIBONACCI':
+    case 'FIBONACCI': {
       const fibResult = calculateFibonacci(data.n);
       self.postMessage({ type: 'FIBONACCI_RESULT', result: fibResult });
       break;
+    }
       
-    case 'PRIME_CHECK':
+    case 'PRIME_CHECK': {
       const primeResult = isPrime(data.number);
       self.postMessage({ type: 'PRIME_RESULT', result: primeResult });
       break;
+    }
       
-    case 'ARRAY_SORT':
+    case 'ARRAY_SORT': {
       const sortedResult = heavySort(data.array, data.algorithm);
       self.postMessage({ type: 'SORT_RESULT', result: sortedResult });
       break;
+    }
       
     case 'IMAGE_PROCESS':
       processImage(data.imageData, data.operation)
@@ -24,10 +27,11 @@ self.onmessage = function(e) {
         .catch(error => self.postMessage({ type: 'ERROR', error: error.message }));
       break;
       
-    case 'DATA_ANALYSIS':
+    case 'DATA_ANALYSIS': {
       const analysisResult = analyzeData(data.data);
       self.postMessage({ type: 'ANALYSIS_RESULT', result: analysisResult });
       break;
+    }
       
     default:
       self.postMessage({ type: 'ERROR', error: 'Unknown operation type' });
@@ -190,7 +194,7 @@ async function processImage(imageData, operation) {
       }
       break;
       
-    case 'brightness':
+    case 'brightness': {
       const factor = 1.5; // Increase brightness by 50%
       for (let i = 0; i < processedData.length; i += 4) {
         processedData[i] = Math.min(255, processedData[i] * factor);         // Red
@@ -199,6 +203,7 @@ async function processImage(imageData, operation) {
         // Alpha channel remains unchanged
       }
       break;
+    }
       
     default:
       throw new Error('Unknown image operation');
