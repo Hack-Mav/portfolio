@@ -72,3 +72,6 @@ bundle-analyzer.html
 
 # Resume text file
 resume_text.txt
+
+# GCP Service Account Key
+gcp-sa-key.json
