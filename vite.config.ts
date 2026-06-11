@@ -3,7 +3,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
-import { applySecurityHeaders, applyRateLimit } from './src/middleware/security'
 import path from 'path'
 import type { PluginOption } from 'vite'
 import { fileURLToPath } from 'node:url'
@@ -15,24 +14,6 @@ const dirname =
   typeof __dirname !== 'undefined'
     ? __dirname
     : path.dirname(fileURLToPath(import.meta.url))
-
-// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
-const securityPlugin = (): PluginOption => ({
-  name: 'security-plugin',
-  configureServer(server) {
-    server.middlewares.use((req, res, next) => {
-      // Apply security headers
-      applySecurityHeaders(req as any, res)
-
-      // Apply rate limiting
-      const isRateLimited = !applyRateLimit(req as any, res)
-      if (isRateLimited) {
-        return // Rate limit response already sent
-      }
-      next()
-    })
-  },
-})
 
 // PWA Configuration
 const pwaOptions: import('vite-plugin-pwa').VitePWAOptions = {
@@ -104,7 +85,6 @@ const pwaOptions: import('vite-plugin-pwa').VitePWAOptions = {
 export default defineConfig({
   plugins: [
     react(),
-    securityPlugin(),
     VitePWA(pwaOptions),
     visualizer({
       open: true,
