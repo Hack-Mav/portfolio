@@ -110,8 +110,8 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
   const tooltipId = `project-tooltip-${project.name.replace(/[^a-zA-Z0-9]/g, '-')}-${index}`;
   
   const { 
-    name = 'Unnamed Project',
-    description = 'No description available',
+    name,
+    description,
     html_url,
     homepage,
     stargazers_count = 0,
@@ -119,6 +119,9 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
     watchers_count = 0,
     language,
   } = project;
+
+  const displayName = name || 'Unnamed Project';
+  const displayDescription = description || 'No description available';
 
   return (
     <motion.article
@@ -142,7 +145,7 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
         >
           <motion.div variants={itemVariants} className="flex justify-between items-start">
             <h3 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-700 dark:from-primary-400 dark:to-primary-300 bg-clip-text text-transparent">
-              {name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              {displayName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
             </h3>
             <div className="flex space-x-2">
               {homepage && (
@@ -177,7 +180,7 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps): JSX.Element => {
           </motion.div>
 
           <motion.p variants={itemVariants} className="text-gray-600 dark:text-gray-300">
-            {description}
+            {displayDescription}
           </motion.p>
 
           <motion.div variants={itemVariants} className="pt-2 mt-4 border-t border-gray-100 dark:border-slate-800">

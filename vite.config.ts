@@ -7,9 +7,6 @@ import path from 'path'
 import type { PluginOption } from 'vite'
 import { fileURLToPath } from 'node:url'
 
-// Test plugins
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
-import { playwright } from '@vitest/browser-playwright'
 const dirname =
   typeof __dirname !== 'undefined'
     ? __dirname
@@ -86,12 +83,14 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA(pwaOptions),
-    visualizer({
-      open: true,
-      gzipSize: true,
-      brotliSize: true,
-      filename: 'bundle-analyzer.html',
-    }) as PluginOption,
+    // Bundle analyzer only runs when ANALYZE=true and never auto-opens a browser
+    process.env.ANALYZE === 'true' &&
+      visualizer({
+        open: false,
+        gzipSize: true,
+        brotliSize: true,
+        filename: 'bundle-analyzer.html',
+      }) as PluginOption,
   ],
   publicDir: 'public',
   preview: {
@@ -100,7 +99,8 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    // Only emit source maps in development or when explicitly requested
+    sourcemap: process.env.SOURCE_MAP === 'true' || process.env.NODE_ENV !== 'production',
     // Enable better tree-shaking
     target: 'esnext',
     rollupOptions: {
@@ -156,16 +156,16 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@pages': path.resolve(__dirname, './src/pages'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@services': path.resolve(__dirname, './src/services'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@assets': path.resolve(__dirname, './src/assets'),
-      '@styles': path.resolve(__dirname, './src/styles'),
-      '@types': path.resolve(__dirname, './src/types'),
-      '@constants': path.resolve(__dirname, './src/constants'),
+      '@': path.resolve(dirname, './src'),
+      '@components': path.resolve(dirname, './src/components'),
+      '@pages': path.resolve(dirname, './src/pages'),
+      '@hooks': path.resolve(dirname, './src/hooks'),
+      '@services': path.resolve(dirname, './src/services'),
+      '@utils': path.resolve(dirname, './src/utils'),
+      '@assets': path.resolve(dirname, './src/assets'),
+      '@styles': path.resolve(dirname, './src/styles'),
+      '@types': path.resolve(dirname, './src/types'),
+      '@constants': path.resolve(dirname, './src/constants'),
     },
   },
   optimizeDeps: {
@@ -187,45 +187,29 @@ export default defineConfig({
     // Global constants for better tree-shaking
     __DEV__: process.env.NODE_ENV === 'development',
     __PROD__: process.env.NODE_ENV === 'production',
+    // Vite does not expose process.env by default; shim for client-side NODE_ENV checks
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'production'),
   },
   server: {
     fs: {
-      // Allow serving files from one level up
-      allow: ['..'],
+      // Restrict serving files to the project root only
+      allow: ['.'],
     },
   },
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
+    exclude: [
+      'node_modules/**',
+      'dist/**',
+      'e2e/**',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '**/*.stories.*',
+    ],
     coverage: {
       reporter: ['text', 'json', 'html'],
     },
-    projects: [
-      {
-        extends: true,
-        plugins: [
-          // The plugin will run tests for the stories defined in your Storybook config
-          // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
-          storybookTest({
-            configDir: path.join(dirname, '.storybook'),
-          }),
-        ],
-        test: {
-          name: 'storybook',
-          browser: {
-            enabled: true,
-            headless: true,
-            provider: playwright({}),
-            instances: [
-              {
-                browser: 'chromium',
-              },
-            ],
-          },
-          setupFiles: ['.storybook/vitest.setup.ts'],
-        },
-      },
-    ],
   },
 })

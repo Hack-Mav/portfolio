@@ -306,7 +306,7 @@ const Contact: React.FC = () => {
                   </p>
                   <div className="flex flex-wrap gap-4">
                     <SocialLink
-                      href="https://github.com/Hack-Mav"
+                      href="https://github.com/parthivrawat"
                       label="GitHub"
                       className="text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-300"
                     >

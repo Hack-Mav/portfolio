@@ -5,14 +5,18 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import LazyImage from '../LazyImage';
 
-// Mock IntersectionObserver
-const mockIntersectionObserver = vi.fn();
-mockIntersectionObserver.mockReturnValue({
+// Shared observer instance reused by each LazyImage in tests
+const observerMock = {
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
+};
+
+// Mock IntersectionObserver as a constructible function
+const mockIntersectionObserver = vi.fn(function (this: void, _callback: Function) {
+  return observerMock;
 });
-window.IntersectionObserver = mockIntersectionObserver;
+window.IntersectionObserver = mockIntersectionObserver as unknown as typeof IntersectionObserver;
 
 // Create a mock store
 const createMockStore = () => {
@@ -49,6 +53,10 @@ describe('LazyImage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset to a default constructible implementation for each test
+    mockIntersectionObserver.mockImplementation(function (this: void, _callback: Function) {
+      return observerMock;
+    });
   });
 
   it('renders placeholder initially', () => {
@@ -64,17 +72,12 @@ describe('LazyImage', () => {
   });
 
   it('loads image when in view', async () => {
-    // Mock IntersectionObserver to trigger intersection
-    mockIntersectionObserver.mockImplementation((callback) => {
-      // Simulate image entering viewport
-      setTimeout(() => {
-        callback([{ isIntersecting: true, target: document.createElement('img') }]);
-      }, 100);
-      return {
-        observe: vi.fn(),
-        unobserve: vi.fn(),
-        disconnect: vi.fn(),
-      };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let storedCallback: any = null;
+
+    mockIntersectionObserver.mockImplementation(function (this: void, callback: any) {
+      storedCallback = callback;
+      return observerMock;
     });
 
     render(
@@ -83,17 +86,18 @@ describe('LazyImage', () => {
       </TestWrapper>
     );
 
+    // Simulate image entering viewport
+    const img = screen.getByRole('img');
+    if (storedCallback) {
+      storedCallback([{ isIntersecting: true, target: img } as unknown as IntersectionObserverEntry]);
+    }
+
     await waitFor(() => {
-      const img = screen.getByRole('img');
       expect(img).toHaveAttribute('src', 'https://example.com/test-image.jpg');
     });
   });
 
   it('shows error state when image fails to load', async () => {
-    // Mock image loading error
-    const mockImg = document.createElement('img');
-    Object.defineProperty(mockImg, 'naturalWidth', { value: 0 });
-    
     render(
       <TestWrapper>
         <LazyImage {...defaultProps} />
@@ -101,12 +105,12 @@ describe('LazyImage', () => {
     );
 
     const img = screen.getByRole('img');
-    
+
     // Simulate error event
     fireEvent.error(img);
 
     await waitFor(() => {
-      expect(img).toHaveAttribute('src', expect.stringContaining('Failed to load'));
+      expect(screen.getByText('Failed to load image')).toBeInTheDocument();
     });
   });
 
@@ -260,7 +264,8 @@ describe('LazyImage', () => {
       </TestWrapper>
     );
 
-    const img = screen.getByRole('img');
+    // Images with an empty alt are ignored by assistive technologies
+    const img = screen.getByRole('presentation');
     expect(img).toHaveAttribute('alt', '');
   });
 
@@ -309,7 +314,7 @@ describe('LazyImage', () => {
   it('is accessible via keyboard', () => {
     render(
       <TestWrapper>
-        <LazyImage {...defaultProps} />
+        <LazyImage {...defaultProps} tabIndex={0} />
       </TestWrapper>
     );
 

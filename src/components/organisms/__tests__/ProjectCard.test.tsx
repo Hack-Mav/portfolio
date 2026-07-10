@@ -7,14 +7,19 @@ import { motion } from 'framer-motion';
 import ProjectCard from '../ProjectCard';
 
 // Mock framer-motion to avoid animation issues in tests
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-    article: ({ children }: { children: React.ReactNode }) => <article>{children}</article>,
-    a: ({ children, ...props }: any) => <a {...props}>{children}</a>,
-  },
-  useInView: () => true,
-}));
+vi.mock('framer-motion', () => {
+  const MotionMock = ({ children, ...props }: any) => <div {...props}>{children}</div>;
+  const MotionArticle = ({ children, ...props }: any) => <article {...props}>{children}</article>;
+  return {
+    motion: {
+      div: MotionMock,
+      article: MotionArticle,
+      p: MotionMock,
+      a: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+    },
+    useInView: () => true,
+  };
+});
 
 // Mock react-tooltip
 vi.mock('react-tooltip', () => ({
@@ -90,7 +95,7 @@ describe('ProjectCard', () => {
     );
 
     // Check project name
-    expect(screen.getByText(/Test Project/i)).toBeInTheDocument();
+    expect(screen.getByText('Test Project')).toBeInTheDocument();
     
     // Check description
     expect(screen.getByText('A test project for testing purposes')).toBeInTheDocument();
@@ -236,18 +241,18 @@ describe('ProjectCard', () => {
       </TestWrapper>
     );
 
-    expect(screen.getByText(/My Awesome Project With Dashes/i)).toBeInTheDocument();
+    expect(screen.getByText('My Awesome Project With Dashes')).toBeInTheDocument();
   });
 
   it('displays correct tooltip IDs', () => {
-    render(
+    const { container } = render(
       <TestWrapper>
         <ProjectCard {...defaultProps} />
       </TestWrapper>
     );
 
-    // Check that tooltip elements have correct IDs
-    const tooltipElements = screen.getAllByTestId(/project-tooltip/);
+    // Check that tooltip trigger elements have the expected data-tooltip-id prefix
+    const tooltipElements = container.querySelectorAll('[data-tooltip-id^="project-tooltip"]');
     expect(tooltipElements.length).toBeGreaterThan(0);
   });
 
@@ -265,9 +270,9 @@ describe('ProjectCard', () => {
       </TestWrapper>
     );
 
-    expect(screen.getByText('1,234,567')).toBeInTheDocument(); // stars
-    expect(screen.getByText('555,555')).toBeInTheDocument(); // watchers
-    expect(screen.getByText('987,654')).toBeInTheDocument(); // forks
+    expect(screen.getByText(projectWithLargeNumbers.stargazers_count.toLocaleString())).toBeInTheDocument(); // stars
+    expect(screen.getByText(projectWithLargeNumbers.watchers_count.toLocaleString())).toBeInTheDocument(); // watchers
+    expect(screen.getByText(projectWithLargeNumbers.forks_count.toLocaleString())).toBeInTheDocument(); // forks
   });
 
   it('has correct CSS classes', () => {
@@ -280,7 +285,7 @@ describe('ProjectCard', () => {
     const card = screen.getByRole('article');
     expect(card).toHaveClass('group');
     expect(card).toHaveClass('relative');
-    expect(card).toHaveClass('bg-white');
+    expect(card).toHaveClass('bg-white/80');
   });
 
   it('is accessible via keyboard', async () => {
@@ -309,7 +314,7 @@ describe('ProjectCard', () => {
     );
 
     // The card should render correctly regardless of index
-    expect(screen.getByText(/Test Project/i)).toBeInTheDocument();
+    expect(screen.getByText('Test Project')).toBeInTheDocument();
   });
 
   it('handles edge cases in project data', () => {

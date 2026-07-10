@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const GITHUB_USERNAME = 'Hack-Mav' // Replace with your GitHub username
+const GITHUB_USERNAME = 'parthivrawat' // Replace with your GitHub username
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
 class GitHubService {

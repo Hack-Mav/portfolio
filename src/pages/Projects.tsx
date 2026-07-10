@@ -22,7 +22,7 @@ const Projects: React.FC = () => {
       impact:
         'Enabled frictionless sharing workflows with sub-20ms redirects at scale, deployed on GCP App Engine for zero-downtime rollouts.',
       links: [
-        { label: 'GitHub Repo', href: 'https://github.com/Hack-Mav/url-shortener' },
+        { label: 'GitHub Repo', href: 'https://github.com/parthivrawat/url-shortener' },
       ],
     },
     {
@@ -33,7 +33,7 @@ const Projects: React.FC = () => {
       impact:
         'Delivered high-confidence predictions to surface probable heart disease correlations, guiding early interventions and research insights.',
       links: [
-        { label: 'Project GitHub', href: 'https://github.com/Hack-Mav/heart-disease-monitoring' },
+        { label: 'Project GitHub', href: 'https://github.com/parthivrawat/heart-disease-monitoring' },
       ],
     },
   ];

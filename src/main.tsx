@@ -76,7 +76,7 @@ if (container) {
   
   // Use requestIdleCallback if available, otherwise render immediately
   if ('requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(
+    window.requestIdleCallback(
       () => root.render(<AppContainer />),
       { timeout: 2000 } // Wait max 2 seconds before starting render
     );

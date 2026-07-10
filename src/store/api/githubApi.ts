@@ -3,7 +3,7 @@ import type { Repository, GitHubError as _GitHubError, GitHubRateLimit as _GitHu
 import type { RootState } from '../store';
 
 const GITHUB_API_URL = 'https://api.github.com';
-const GITHUB_USERNAME = 'Hack-Mav';
+const GITHUB_USERNAME = 'parthivrawat';
 
 // Extend the BaseQueryMeta type to include headers
 interface CustomMeta {
