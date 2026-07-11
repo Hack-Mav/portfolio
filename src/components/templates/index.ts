@@ -1,2 +1,1 @@
-// Export template components here
-export {};
+export { default as PageSection } from './PageSection'

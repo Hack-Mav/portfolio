@@ -1,0 +1,66 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/blocks'
+import { tokens } from './tokens'
+
+<Meta title="Design System/Tokens" />
+
+# Design Tokens
+
+The portfolio uses a single set of design tokens for colors, typography, spacing,
+radius, shadows, and motion. These values are defined in `src/design-system/tokens.ts`
+and are exposed as CSS custom properties in `src/styles/tokens.css`.
+
+## Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Primary"
+    subtitle="Brand blues"
+    colors={{
+      50: tokens.colors.primary[50],
+      100: tokens.colors.primary[100],
+      200: tokens.colors.primary[200],
+      500: tokens.colors.primary[500],
+      600: tokens.colors.primary[600],
+      700: tokens.colors.primary[700],
+      900: tokens.colors.primary[900],
+    }}
+  />
+  <ColorItem
+    title="Gray"
+    subtitle="Neutral grays"
+    colors={{
+      50: tokens.colors.gray[50],
+      100: tokens.colors.gray[100],
+      200: tokens.colors.gray[200],
+      300: tokens.colors.gray[300],
+      400: tokens.colors.gray[400],
+      500: tokens.colors.gray[500],
+      600: tokens.colors.gray[600],
+      700: tokens.colors.gray[700],
+      800: tokens.colors.gray[800],
+      900: tokens.colors.gray[900],
+    }}
+  />
+</ColorPalette>
+
+## Typography
+
+- **Sans:** {tokens.fonts.sans.join(', ')}
+- **Heading:** {tokens.fonts.heading.join(', ')}
+- **Mono:** {tokens.fonts.mono.join(', ')}
+
+## Motion
+
+| Token          | Value                           |
+| -------------- | ------------------------------- |
+| fast           | {tokens.motion.duration.fast}   |
+| base           | {tokens.motion.duration.base}   |
+| slow           | {tokens.motion.duration.slow}   |
+| slower         | {tokens.motion.duration.slower} |
+| default easing | {tokens.motion.easing.default}  |
+
+## Usage
+
+Use the Tailwind theme classes (e.g. `bg-primary-600`, `text-gray-700`) or the
+primitive components. The values are all driven by the CSS custom properties,
+so they can be updated in one place.
