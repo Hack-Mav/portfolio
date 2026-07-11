@@ -1,0 +1,7 @@
+# Generated artifacts
+/dist
+/coverage
+/docs/api
+/storybook-static
+bundle-analyzer.html
+package-lock.json

@@ -8,6 +8,7 @@
 # Build output
 /dist
 /dist-ssr
+/dev-dist
 *.local
 /.next
 
@@ -28,6 +29,7 @@ pnpm-debug.log*
 .idea
 .vscode/*
 !.vscode/extensions.json
+.windsurf/
 .idea
 *.suo
 *.ntvs*
@@ -48,16 +50,21 @@ pnpm-debug.log*
 /coverage
 /cypress/videos/
 /cypress/screenshots/
+/test-results/
+/playwright-report/
 
 # Production
 /build
 
 # Misc
 .DS_Store
+Thumbs.db
+desktop.ini
 *.pem
 
 # Vite
 .history/
+*.tsbuildinfo
 
 # Debug logs
 
@@ -69,9 +76,13 @@ deployment/
 *storybook.log
 storybook-static
 bundle-analyzer.html
+.lighthouseci/
 
 # Resume text file
 resume_text.txt
+
+# Generated critique files
+CODEBASE_CRITIQUE_*.md
 
 # GCP Service Account Key
 gcp-sa-key.json

@@ -7,7 +7,6 @@
 #   $ gcloud topic gcloudignore
 #
 node_modules/
-app.yaml
 
 .gcloudignore
 # If you would like to upload your .git directory, .gitignore file or files
@@ -18,3 +17,26 @@ app.yaml
 
 # Node.js dependencies:
 node_modules/
+
+# Service account keys and environment files
+gcp-sa-key.json
+.env*
+
+# Generated artifacts and dev directories (not needed for App Engine deployment)
+dev-dist/
+coverage/
+bundle-analyzer.html
+storybook-static/
+*storybook.log
+CODEBASE_CRITIQUE_*.md
+test-results/
+playwright-report/
+.lighthouseci/
+.vscode/
+.idea/
+.windsurf/
+.github/
+.storybook/
+e2e/
+scripts/
+docs/

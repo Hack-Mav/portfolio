@@ -2,15 +2,80 @@ runtime: nodejs22
 instance_class: F2
 service: default
 
-handlers:
-# Serve all static files with their hashed filenames
-- url: /(.*\.(js|css|woff2|woff|ttf|eot|svg|png|jpg|jpeg|gif|ico|webp|json|pdf))$
-  static_files: dist/\1
-  upload: dist/.*\.(js|css|woff2|woff|ttf|eot|svg|png|jpg|jpeg|gif|ico|webp|json|pdf)$
-  secure: always
+# Environment variables
+env_variables:
+  NODE_ENV: 'production'
 
-# Route all other routes to index.html for client-side routing
-- url: /(.*)
-  static_files: dist/index.html
-  upload: dist/index\.html
-  secure: always
+# Automatic scaling configuration
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+
+handlers:
+  # Generated JS/CSS assets with immutable hashing
+  - url: /assets
+    static_dir: dist/assets
+    secure: always
+    redirect_http_response_code: 301
+    http_headers:
+      Cache-Control: "public, max-age=31536000, immutable"
+
+  # PWA screenshots referenced by the manifest
+  - url: /screenshots
+    static_dir: dist/screenshots
+    secure: always
+    redirect_http_response_code: 301
+    http_headers:
+      Cache-Control: "public, max-age=31536000, immutable"
+
+  # Generated JS chunks
+  - url: /js
+    static_dir: dist/js
+    secure: always
+    redirect_http_response_code: 301
+    http_headers:
+      Cache-Control: "public, max-age=31536000, immutable"
+
+  # Generated images
+  - url: /images
+    static_dir: dist/images
+    secure: always
+    redirect_http_response_code: 301
+    http_headers:
+      Cache-Control: "public, max-age=31536000, immutable"
+
+  # Public icons
+  - url: /icons
+    static_dir: dist/icons
+    secure: always
+    redirect_http_response_code: 301
+    http_headers:
+      Cache-Control: "public, max-age=31536000, immutable"
+
+  # Web app manifest
+  - url: /manifest.webmanifest
+    static_files: dist/manifest.webmanifest
+    upload: dist/manifest.webmanifest
+    mime_type: application/manifest+json
+    secure: always
+    redirect_http_response_code: 301
+    http_headers:
+      Cache-Control: "public, max-age=0, must-revalidate"
+
+  # Other root-level static files (logo, service worker, source maps, SEO files, etc.)
+  - url: /([^/]+\.(js|svg|map|ico|png|jpg|jpeg|gif|webp|woff|woff2|json|pdf|txt|xml))$
+    static_files: dist/\1
+    upload: dist/[^/]+\.(js|svg|map|ico|png|jpg|jpeg|gif|webp|woff|woff2|json|pdf|txt|xml)$
+    secure: always
+    redirect_http_response_code: 301
+    http_headers:
+      Cache-Control: "public, max-age=31536000, immutable"
+
+  # Serve index.html for all other routes (SPA routing)
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
+    redirect_http_response_code: 301
+    http_headers:
+      Cache-Control: "public, max-age=0, must-revalidate"
