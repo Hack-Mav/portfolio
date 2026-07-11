@@ -1,128 +1,153 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react'
 
 interface SkipLinkProps {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
+  href: string
+  children: React.ReactNode
+  className?: string
 }
 
 /**
  * SkipLink component for keyboard navigation
  * Allows users to skip to main content or navigation
  */
-export const SkipLink: React.FC<SkipLinkProps> = ({ 
-  href, 
-  children, 
-  className = '' 
+export const SkipLink: React.FC<SkipLinkProps> = ({
+  href,
+  children,
+  className = '',
 }) => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const targetId = href.replace(/^#/, '')
+    const target = document.getElementById(targetId)
+    if (!target) return
+
+    // Ensure the target is temporarily focusable without adding it to the tab order
+    const hadTabIndex = target.hasAttribute('tabindex')
+    if (!hadTabIndex) {
+      target.setAttribute('tabindex', '-1')
+    }
+
+    target.focus({ preventScroll: true })
+    target.scrollIntoView({ block: 'start' })
+
+    if (!hadTabIndex) {
+      const restoreTabIndex = () => {
+        target.removeAttribute('tabindex')
+        target.removeEventListener('blur', restoreTabIndex)
+      }
+      target.addEventListener('blur', restoreTabIndex)
+    }
+  }
+
   return (
     <a
       href={href}
+      onClick={handleClick}
       className={`
-        sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 
-        bg-blue-600 text-white px-4 py-2 rounded-md z-50 focus:outline-none 
-        focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+        sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-4 focus-visible:left-4
+        bg-blue-600 text-white px-4 py-2 rounded-md z-50 focus-visible:outline-none
+        focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2
         ${className}
       `}
     >
       {children}
     </a>
-  );
-};
+  )
+}
 
 interface FocusTrapProps {
-  children: React.ReactNode;
-  isActive?: boolean;
-  onEscape?: () => void;
+  children: React.ReactNode
+  isActive?: boolean
+  onEscape?: () => void
 }
 
 /**
  * FocusTrap component for modals and dropdowns
  * Traps focus within a container and handles escape key
  */
-export const FocusTrap: React.FC<FocusTrapProps> = ({ 
-  children, 
+export const FocusTrap: React.FC<FocusTrapProps> = ({
+  children,
   isActive = true,
-  onEscape 
+  onEscape,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive) return
 
-    const container = containerRef.current;
-    if (!container) return;
+    const container = containerRef.current
+    if (!container) return
 
     // Store the currently focused element
-    previousFocusRef.current = document.activeElement as HTMLElement;
+    previousFocusRef.current = document.activeElement as HTMLElement
 
     // Get all focusable elements within the container
     const focusableElements = container.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    ) as NodeListOf<HTMLElement>;
+    ) as NodeListOf<HTMLElement>
 
-    if (focusableElements.length === 0) return;
+    if (focusableElements.length === 0) return
 
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+    const firstElement = focusableElements[0]
+    const lastElement = focusableElements[focusableElements.length - 1]
 
     // Focus the first element
-    firstElement?.focus();
+    firstElement?.focus()
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onEscape?.();
-        return;
+        onEscape?.()
+        return
       }
 
-      if (e.key !== 'Tab') return;
+      if (e.key !== 'Tab') return
 
       if (e.shiftKey) {
         // Shift + Tab
         if (document.activeElement === firstElement) {
-          e.preventDefault();
-          lastElement?.focus();
+          e.preventDefault()
+          lastElement?.focus()
         }
       } else {
         // Tab
         if (document.activeElement === lastElement) {
-          e.preventDefault();
-          firstElement?.focus();
+          e.preventDefault()
+          firstElement?.focus()
         }
       }
-    };
+    }
 
     // Add event listener
-    container.addEventListener('keydown', handleKeyDown);
+    container.addEventListener('keydown', handleKeyDown)
 
     // Cleanup
     return () => {
-      container.removeEventListener('keydown', handleKeyDown);
+      container.removeEventListener('keydown', handleKeyDown)
       // Restore focus to the previous element
-      previousFocusRef.current?.focus();
-    };
-  }, [isActive, onEscape]);
+      previousFocusRef.current?.focus()
+    }
+  }, [isActive, onEscape])
 
-  return <div ref={containerRef}>{children}</div>;
-};
+  return <div ref={containerRef}>{children}</div>
+}
 
 interface AriaLiveProps {
-  children: React.ReactNode;
-  politeness?: 'polite' | 'assertive' | 'off';
-  atomic?: boolean;
-  className?: string;
+  children: React.ReactNode
+  politeness?: 'polite' | 'assertive' | 'off'
+  atomic?: boolean
+  className?: string
 }
 
 /**
  * AriaLive component for screen reader announcements
  * Provides live regions for dynamic content updates
  */
-export const AriaLive: React.FC<AriaLiveProps> = ({ 
-  children, 
+export const AriaLive: React.FC<AriaLiveProps> = ({
+  children,
   politeness = 'polite',
   atomic = true,
-  className = '' 
+  className = '',
 }) => {
   return (
     <div
@@ -132,15 +157,15 @@ export const AriaLive: React.FC<AriaLiveProps> = ({
     >
       {children}
     </div>
-  );
-};
+  )
+}
 
 interface KeyboardNavigationProps {
-  children: React.ReactNode;
-  orientation?: 'horizontal' | 'vertical';
-  loop?: boolean;
-  onSelect?: (index: number) => void;
-  className?: string;
+  children: React.ReactNode
+  orientation?: 'horizontal' | 'vertical'
+  loop?: boolean
+  onSelect?: (index: number) => void
+  className?: string
 }
 
 /**
@@ -152,78 +177,78 @@ export const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
   orientation = 'vertical',
   loop = true,
   onSelect,
-  className = ''
+  className = '',
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [selectedIndex, setSelectedIndex] = useState(-1)
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const container = containerRef.current
+    if (!container) return
 
     const focusableElements = Array.from(
       container.querySelectorAll('[role="menuitem"], [role="option"], button')
-    ) as HTMLElement[];
+    ) as HTMLElement[]
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const { key } = e;
-      let newIndex = selectedIndex;
+      const { key } = e
+      let newIndex = selectedIndex
 
       switch (key) {
         case orientation === 'vertical' ? 'ArrowDown' : 'ArrowRight':
-          e.preventDefault();
-          newIndex = selectedIndex + 1;
+          e.preventDefault()
+          newIndex = selectedIndex + 1
           if (newIndex >= focusableElements.length) {
-            newIndex = loop ? 0 : focusableElements.length - 1;
+            newIndex = loop ? 0 : focusableElements.length - 1
           }
-          break;
+          break
 
         case orientation === 'vertical' ? 'ArrowUp' : 'ArrowLeft':
-          e.preventDefault();
-          newIndex = selectedIndex - 1;
+          e.preventDefault()
+          newIndex = selectedIndex - 1
           if (newIndex < 0) {
-            newIndex = loop ? focusableElements.length - 1 : 0;
+            newIndex = loop ? focusableElements.length - 1 : 0
           }
-          break;
+          break
 
         case 'Home':
-          e.preventDefault();
-          newIndex = 0;
-          break;
+          e.preventDefault()
+          newIndex = 0
+          break
 
         case 'End':
-          e.preventDefault();
-          newIndex = focusableElements.length - 1;
-          break;
+          e.preventDefault()
+          newIndex = focusableElements.length - 1
+          break
 
         case 'Enter':
         case ' ':
           if (selectedIndex >= 0) {
-            e.preventDefault();
-            onSelect?.(selectedIndex);
+            e.preventDefault()
+            onSelect?.(selectedIndex)
           }
-          return;
+          return
 
         default:
-          return;
+          return
       }
 
       // Update selected index and focus
       if (newIndex !== selectedIndex && focusableElements?.[newIndex]) {
-        setSelectedIndex(newIndex);
-        focusableElements[newIndex]!.focus();
+        setSelectedIndex(newIndex)
+        focusableElements[newIndex]!.focus()
       }
-    };
+    }
 
-    container.addEventListener('keydown', handleKeyDown);
+    container.addEventListener('keydown', handleKeyDown)
 
     return () => {
-      container.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [selectedIndex, orientation, loop, onSelect]);
+      container.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [selectedIndex, orientation, loop, onSelect])
 
   return (
-    <div 
+    <div
       ref={containerRef}
       role={orientation === 'vertical' ? 'menu' : 'menubar'}
       className={className}
@@ -234,105 +259,99 @@ export const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
             role: 'menuitem',
             tabIndex: selectedIndex === index ? 0 : -1,
             'aria-selected': selectedIndex === index,
-          });
+          })
         }
-        return child;
+        return child
       })}
     </div>
-  );
-};
+  )
+}
 
 interface AnnouncerProps {
-  message: string;
-  politeness?: 'polite' | 'assertive';
-  timeout?: number;
+  message: string
+  politeness?: 'polite' | 'assertive'
+  timeout?: number
+  debounceMs?: number
 }
 
 /**
  * Announcer component for screen reader announcements
- * Automatically announces messages to screen readers
+ * Announces messages to screen readers, skipping the initial mount and debouncing
+ * rapid changes so route announcements are not spammed.
  */
-export const Announcer: React.FC<AnnouncerProps> = ({ 
-  message, 
+export const Announcer: React.FC<AnnouncerProps> = ({
+  message,
   politeness = 'polite',
-  timeout = 1000 
+  timeout = 1000,
+  debounceMs = 300,
 }) => {
-  const [announcement, setAnnouncement] = useState('');
-  const prevMessageRef = useRef(message);
-  const updateAnnouncementRef = useRef(false);
+  const [announcement, setAnnouncement] = useState('')
+  const hasMountedRef = useRef(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const clearRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (message !== prevMessageRef.current) {
-      prevMessageRef.current = message;
-      updateAnnouncementRef.current = true;
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
     }
-  }, [message]);
 
-  useEffect(() => {
-    if (updateAnnouncementRef.current) {
-      updateAnnouncementRef.current = false;
-      // Defer setState to avoid synchronous call in effect
-      setTimeout(() => {
-        setAnnouncement(prevMessageRef.current);
-      }, 0);
-      const timer = setTimeout(() => {
-        setAnnouncement('');
-      }, timeout);
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (clearRef.current) clearTimeout(clearRef.current)
 
-      return () => clearTimeout(timer);
+    debounceRef.current = setTimeout(() => {
+      setAnnouncement(message)
+      clearRef.current = setTimeout(() => setAnnouncement(''), timeout)
+    }, debounceMs)
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      if (clearRef.current) clearTimeout(clearRef.current)
     }
-  }, [timeout]);
+  }, [message, timeout, debounceMs])
 
   return (
-    <div
-      aria-live={politeness}
-      aria-atomic="true"
-      className="sr-only"
-    >
+    <div aria-live={politeness} aria-atomic="true" className="sr-only">
       {announcement}
     </div>
-  );
-};
+  )
+}
 
 interface FocusIndicatorProps {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }
 
 /**
  * FocusIndicator component for better keyboard navigation visibility
  * Adds visual indicators when navigating with keyboard
  */
-export const FocusIndicator: React.FC<FocusIndicatorProps> = ({ 
-  children, 
-  className = '' 
+export const FocusIndicator: React.FC<FocusIndicatorProps> = ({
+  children,
+  className = '',
 }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Tab') {
-        document.body.classList.add('keyboard-navigation');
+        document.body.classList.add('keyboard-navigation')
       }
-    };
+    }
 
     const handleMouseDown = () => {
-      document.body.classList.remove('keyboard-navigation');
-    };
+      document.body.classList.remove('keyboard-navigation')
+    }
 
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('mousedown', handleMouseDown)
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('mousedown', handleMouseDown);
-    };
-  }, []);
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('mousedown', handleMouseDown)
+    }
+  }, [])
 
-  return (
-    <div className={className}>
-      {children}
-    </div>
-  );
-};
+  return <div className={className}>{children}</div>
+}
 
 export default {
   SkipLink,
@@ -341,4 +360,4 @@ export default {
   KeyboardNavigation,
   Announcer,
   FocusIndicator,
-};
+}

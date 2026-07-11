@@ -1,2 +1,2 @@
 // Export page components here
-export {};
+export {}

@@ -1,44 +1,30 @@
-import { useMemo, ReactElement } from 'react';
-import { motion, Variants } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
-import { HiArrowRight, HiDownload } from 'react-icons/hi';
-import { Link } from 'react-router-dom';
-import ProjectCard from '@components/organisms/ProjectCard';
-import LoadingSpinner from '@components/atoms/LoadingSpinner';
-import { useGitHubRepositories } from '@/hooks/useGitHub';
-import type { Repository } from '@/types/github';
+import { useMemo, ReactElement } from 'react'
+import { motion, Variants } from 'framer-motion'
+import { Helmet } from 'react-helmet-async'
+import { HiArrowRight, HiDownload } from 'react-icons/hi'
+import { Link } from 'react-router-dom'
+import ProjectCard from '@components/organisms/ProjectCard'
+import PageSection from '@components/templates/PageSection'
+import LoadingSpinner from '@components/atoms/LoadingSpinner'
+import { useGitHubRepositories } from '@/hooks/useGitHub'
+import type { Repository } from '@/types/github'
 
 // Extend the Variants type to include our specific structure
 type MotionVariants = Variants & {
   hidden: {
-    opacity: number;
-    y?: number;
-    [key: string]: unknown; // Add index signature
-  };
+    opacity: number
+    y?: number
+    [key: string]: unknown // Add index signature
+  }
   visible: {
-    opacity: number;
-    y?: number;
+    opacity: number
+    y?: number
     transition?: {
-      staggerChildren?: number;
-      [key: string]: unknown; // Add index signature
-    };
-    [key: string]: unknown; // Add index signature
-  };
-};
-
-// Props for the Home component
-interface _HomeProps {
-  // Add any props if needed in the future
-}
-
-// Type for the featured projects section
-interface _FeaturedProjectsSectionProps {
-  projects: Repository[];
-}
-
-// Type for the hero section
-interface _HeroSectionProps {
-  onViewWork: () => void;
+      staggerChildren?: number
+      [key: string]: unknown // Add index signature
+    }
+    [key: string]: unknown // Add index signature
+  }
 }
 
 // Animation variants for the container
@@ -50,54 +36,57 @@ const containerVariants: MotionVariants = {
       staggerChildren: 0.2,
     },
   },
-};
+}
 
 // Animation variants for individual items
 const itemVariants: MotionVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
-};
+}
 
 const highlightStats = [
   {
     label: 'Enterprise Releases',
     value: '30+',
-    description: 'Secure modules shipped across admin consoles and enterprise SaaS.',
+    description:
+      'Secure modules shipped across admin consoles and enterprise SaaS.',
   },
   {
     label: 'Cloud Deployments',
     value: 'GCP · App Engine',
-    description: 'Production workloads tuned for resilience, observability, and scale.',
+    description:
+      'Production workloads tuned for resilience, observability, and scale.',
   },
   {
     label: 'Identity & APIs',
     value: 'DID · REST · GraphQL',
-    description: 'High-trust authentication flows and high-performance service design.',
+    description:
+      'High-trust authentication flows and high-performance service design.',
   },
-];
+]
 
-const Home: React.FC<_HomeProps> = (): ReactElement => {
-  const { 
-    repositories, 
-    loading, 
-    error, 
-    refetch, 
+const Home: React.FC = (): ReactElement => {
+  const {
+    repositories,
+    loading,
+    error,
+    refetch,
     isInitialLoading,
-    isRefreshing 
-  } = useGitHubRepositories();
+    isRefreshing,
+  } = useGitHubRepositories()
 
   // Get top 6 projects by stars
   const featuredProjects: Repository[] = useMemo(() => {
-    if (!repositories) return [];
+    if (!repositories) return []
     return [...repositories]
       .sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
-      .slice(0, 6);
-  }, [repositories]);
+      .slice(0, 6)
+  }, [repositories])
 
   const handleRetry = (): void => {
-    refetch();
-  };
-  
+    refetch()
+  }
+
   // Handle loading state
   if (isInitialLoading || loading) {
     return (
@@ -106,7 +95,7 @@ const Home: React.FC<_HomeProps> = (): ReactElement => {
           <LoadingSpinner />
         </div>
       </div>
-    );
+    )
   }
 
   // Handle error state
@@ -127,14 +116,8 @@ const Home: React.FC<_HomeProps> = (): ReactElement => {
           </button>
         </div>
       </div>
-    );
+    )
   }
-
-  const _handleViewWork = (): void => {
-    // Handle view work action if needed
-    console.log('View work clicked');
-  };
-
 
   return (
     <>
@@ -150,16 +133,6 @@ const Home: React.FC<_HomeProps> = (): ReactElement => {
         {/* Hero Section */}
         <section className="relative overflow-hidden pt-28 lg:pt-32 pb-20">
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_150%_at_50%_-20%,#e3edff_0%,#f4f7ff_35%,#f9fbff_60%,#f0f5ff_100%)] dark:bg-[radial-gradient(140%_160%_at_50%_-10%,#0b1220_0%,#0f172a_40%,#020817_100%)]" />
-          
-          {/* Floating Elements */}
-          <div className="absolute right-[15%] top-[20%] h-12 w-12 rounded-full bg-primary-400/30 blur-xl dark:bg-primary-400/20 floating" style={{ animationDelay: '0s' }} />
-          <div className="absolute left-[10%] top-[30%] h-8 w-8 rounded-full bg-blue-300/40 blur-lg dark:bg-blue-400/20 floating" style={{ animationDelay: '1s' }} />
-          <div className="absolute right-[25%] bottom-[25%] h-10 w-10 rounded-full bg-indigo-300/40 blur-lg dark:bg-indigo-400/20 floating" style={{ animationDelay: '2s' }} />
-          <div className="absolute left-[20%] bottom-[15%] h-6 w-6 rounded-full bg-purple-300/40 blur-md dark:bg-purple-400/20 floating" style={{ animationDelay: '3s' }} />
-          
-          {/* Background Blobs */}
-          <div className="absolute right-[-20%] top-[-10%] h-64 w-64 rounded-full bg-primary-400/20 blur-3xl dark:bg-primary-500/10" />
-          <div className="absolute left-[-10%] bottom-[-20%] h-72 w-72 rounded-full bg-primary-200/40 blur-3xl dark:bg-primary-900/40" />
 
           <div className="container-max">
             <motion.div
@@ -176,28 +149,33 @@ const Home: React.FC<_HomeProps> = (): ReactElement => {
                   variants={itemVariants}
                   className="font-heading text-4xl md:text-6xl leading-tight text-slate-900 dark:text-white mb-6"
                 >
-                  I build resilient Go + React platforms that keep identity and data safe.
+                  I build resilient Go + React platforms that keep identity and
+                  data safe.
                 </motion.h1>
 
                 <motion.p
                   variants={itemVariants}
                   className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mb-10"
                 >
-                  From decentralized identity workflows to micro-frontend delivery, I align security, performance, and developer velocity across every release.
+                  From decentralized identity workflows to micro-frontend
+                  delivery, I align security, performance, and developer
+                  velocity across every release.
                 </motion.p>
 
                 <motion.div
                   variants={itemVariants}
                   className="flex flex-col sm:flex-row sm:items-center gap-4"
                 >
-                  <Link to="/projects" className="btn-primary inline-flex items-center">
+                  <Link
+                    to="/projects"
+                    className="btn-primary inline-flex items-center"
+                  >
                     View My Work
                     <HiArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                   <a
-                    href="https://storage.googleapis.com/argon-magnet-442917-k1.appspot.com/public/Full_Stack_Resume.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href="/Full_Stack_Resume.pdf"
+                    download
                     className="btn-secondary inline-flex items-center"
                   >
                     <HiDownload className="w-5 h-5 mr-2" />
@@ -209,7 +187,7 @@ const Home: React.FC<_HomeProps> = (): ReactElement => {
                   variants={itemVariants}
                   className="mt-10 grid gap-4 sm:grid-cols-3"
                 >
-                  {highlightStats.map((stat) => (
+                  {highlightStats.map(stat => (
                     <div key={stat.label} className="surface-panel p-5">
                       <p className="text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 mb-2">
                         {stat.label}
@@ -235,10 +213,16 @@ const Home: React.FC<_HomeProps> = (): ReactElement => {
                     Current Focus
                   </h2>
                   <p className="text-slate-600 dark:text-slate-300">
-                    Orchestrating decentralized identity flows, evolving module-federated frontends, and raising reliability envelopes across GCP-backed services.
+                    Orchestrating decentralized identity flows, evolving
+                    module-federated frontends, and raising reliability
+                    envelopes across GCP-backed services.
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {['Decentralized Identity', 'Micro Frontends', 'Reliability Engineering'].map((tag) => (
+                    {[
+                      'Decentralized Identity',
+                      'Micro Frontends',
+                      'Reliability Engineering',
+                    ].map(tag => (
                       <span
                         key={tag}
                         className="rounded-full bg-primary-500/10 text-primary-600 dark:text-primary-200 px-3 py-1 text-sm font-medium"
@@ -254,64 +238,53 @@ const Home: React.FC<_HomeProps> = (): ReactElement => {
         </section>
 
         {/* Featured Projects Section */}
-        <section className="section-padding bg-white/70 dark:bg-slate-950/50 relative overflow-hidden">
-          {/* Floating Elements for Projects Section */}
-          <div className="absolute left-[5%] top-[10%] h-10 w-10 rounded-full bg-blue-300/30 blur-lg dark:bg-blue-400/20 floating" style={{ animationDelay: '0.5s' }} />
-          <div className="absolute right-[8%] top-[15%] h-6 w-6 rounded-full bg-indigo-300/30 blur-md dark:bg-indigo-400/20 floating" style={{ animationDelay: '1.5s' }} />
-          <div className="absolute left-[15%] bottom-[10%] h-8 w-8 rounded-full bg-purple-300/30 blur-lg dark:bg-purple-400/20 floating" style={{ animationDelay: '2.5s' }} />
-          <div className="absolute right-[10%] bottom-[20%] h-5 w-5 rounded-full bg-primary-300/30 blur-sm dark:bg-primary-400/20 floating" style={{ animationDelay: '3.5s' }} />
-          
-          <div className="container-max relative">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="surface-panel p-10 text-center mb-12"
-            >
-              <span className="eyebrow mb-4 mx-auto">Selected Works</span>
-              <h2 className="text-3xl md:text-4xl font-heading text-slate-900 dark:text-white mb-4">
-                Featured Projects
-              </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-                Crafting efficient architectures, mindful user journeys, and maintainable codebases. Explore a snapshot of the things I build.
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredProjects.map((project: Repository, index: number) => (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                >
-                  <ProjectCard 
-                    project={project}
-                    index={index}
-                  />
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="text-center mt-12"
-            >
-              <Link
-                to="/projects"
-                className="inline-flex items-center text-primary-600 dark:text-primary-300 hover:text-primary-700 dark:hover:text-primary-200 text-lg font-medium transition-colors"
+        <PageSection
+          className="section-padding bg-white/70 dark:bg-slate-950/50"
+          header={{
+            eyebrow: 'Selected Works',
+            title: 'Featured Projects',
+            subtitle:
+              'Crafting efficient architectures, mindful user journeys, and maintainable codebases. Explore a snapshot of the things I build.',
+            className: 'surface-panel p-10 text-center mb-12',
+          }}
+        >
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            role="list"
+          >
+            {featuredProjects.map((project: Repository, index: number) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                role="listitem"
+                aria-setsize={featuredProjects.length}
+                aria-posinset={index + 1}
               >
-                View All Projects
-                <HiArrowRight className="w-5 h-5 ml-2" />
-              </Link>
-            </motion.div>
+                <ProjectCard project={project} index={index} />
+              </motion.div>
+            ))}
           </div>
-        </section>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-center mt-12"
+          >
+            <Link
+              to="/projects"
+              className="inline-flex items-center text-primary-600 dark:text-primary-300 hover:text-primary-700 dark:hover:text-primary-200 text-lg font-medium transition-colors"
+            >
+              View All Projects
+              <HiArrowRight className="w-5 h-5 ml-2" />
+            </Link>
+          </motion.div>
+        </PageSection>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

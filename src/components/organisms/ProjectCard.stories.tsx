@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import ProjectCard from './ProjectCard';
+import type { Meta, StoryObj } from '@storybook/react'
+import ProjectCard from './ProjectCard'
 
 const meta: Meta<typeof ProjectCard> = {
   title: 'Organisms/ProjectCard',
@@ -8,7 +8,8 @@ const meta: Meta<typeof ProjectCard> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'ProjectCard component displays GitHub repository information with interactive elements and animations.',
+        component:
+          'ProjectCard component displays GitHub repository information with interactive elements and animations.',
       },
     },
     a11y: {
@@ -36,10 +37,10 @@ const meta: Meta<typeof ProjectCard> = {
       control: 'number',
     },
   },
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 // Mock project data
 const mockProject = {
@@ -52,14 +53,14 @@ const mockProject = {
   language: 'TypeScript',
   updated_at: '2024-01-15T10:30:00Z',
   homepage: 'https://awesome-project.vercel.app',
-};
+}
 
 export const Default: Story = {
   args: {
     project: mockProject,
     index: 0,
   },
-};
+}
 
 export const WithoutHomepage: Story = {
   args: {
@@ -69,7 +70,7 @@ export const WithoutHomepage: Story = {
     },
     index: 0,
   },
-};
+}
 
 export const WithoutDescription: Story = {
   args: {
@@ -79,7 +80,7 @@ export const WithoutDescription: Story = {
     },
     index: 0,
   },
-};
+}
 
 export const WithoutLanguage: Story = {
   args: {
@@ -89,7 +90,7 @@ export const WithoutLanguage: Story = {
     },
     index: 0,
   },
-};
+}
 
 export const HighStats: Story = {
   args: {
@@ -101,7 +102,7 @@ export const HighStats: Story = {
     },
     index: 0,
   },
-};
+}
 
 export const JavaScriptProject: Story = {
   args: {
@@ -111,7 +112,7 @@ export const JavaScriptProject: Story = {
     },
     index: 0,
   },
-};
+}
 
 export const PythonProject: Story = {
   args: {
@@ -121,7 +122,7 @@ export const PythonProject: Story = {
     },
     index: 0,
   },
-};
+}
 
 export const ComplexName: Story = {
   args: {
@@ -131,7 +132,7 @@ export const ComplexName: Story = {
     },
     index: 0,
   },
-};
+}
 
 // Visual regression test stories
 export const VisualRegression: Story = {
@@ -152,7 +153,7 @@ export const VisualRegression: Story = {
       },
     },
   },
-};
+}
 
 // Accessibility test stories
 export const Accessibility: Story = {
@@ -165,4 +166,4 @@ export const Accessibility: Story = {
       disable: false,
     },
   },
-};
+}

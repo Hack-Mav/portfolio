@@ -1,37 +1,61 @@
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
-import { HiDownload } from 'react-icons/hi';
-import React from 'react';
-import { Tooltip } from 'react-tooltip';
+import { motion } from 'framer-motion'
+import { Helmet } from 'react-helmet-async'
+import { HiDownload } from 'react-icons/hi'
+import { Tooltip } from 'react-tooltip'
+import { PageSection } from '@components/templates/PageSection'
 
 interface Skill {
-  title: string;
-  description: string;
-  icon: string;
+  title: string
+  description: string
+  icon: string
 }
 
 interface Experience {
-  title: string;
-  company: string;
-  date: string;
-  location: string;
-  duties: string[];
+  title: string
+  company: string
+  date: string
+  location: string
+  duties: string[]
 }
 
 interface Achievement {
-  title: string;
-  description: string;
-  icon: string;
+  title: string
+  description: string
+  icon: string
 }
 
 const skills: Skill[] = [
-  { title: 'Golang', description: 'Concurrency-first backend services', icon: '🐹' },
-  { title: 'ReactJS', description: 'Micro frontends & module federation', icon: '⚛️' },
-  { title: 'GraphQL & REST', description: 'High-performance API design', icon: '🔗' },
-  { title: 'MySQL & MongoDB', description: 'Query tuning & data integrity', icon: '🗄️' },
-  { title: 'Google Cloud Platform', description: 'App Engine, observability, scaling', icon: '☁️' },
-  { title: 'AI Tooling', description: 'LLM-powered developer velocity', icon: '🤖' },
-];
+  {
+    title: 'Golang',
+    description: 'Concurrency-first backend services',
+    icon: '🐹',
+  },
+  {
+    title: 'ReactJS',
+    description: 'Micro frontends & module federation',
+    icon: '⚛️',
+  },
+  {
+    title: 'GraphQL & REST',
+    description: 'High-performance API design',
+    icon: '🔗',
+  },
+  {
+    title: 'MySQL & MongoDB',
+    description: 'Query tuning & data integrity',
+    icon: '🗄️',
+  },
+  {
+    title: 'Google Cloud Platform',
+    description: 'App Engine, observability, scaling',
+    icon: '☁️',
+  },
+  {
+    title: 'AI Tooling',
+    description: 'LLM-powered developer velocity',
+    icon: '🤖',
+  },
+]
 
 const experiences: Experience[] = [
   {
@@ -55,20 +79,22 @@ const experiences: Experience[] = [
       'Collaborated with senior developers to debug and enhance libraries',
     ],
   },
-];
+]
 
 const achievements: Achievement[] = [
   {
     title: 'Quantum Computing Scholar',
-    description: 'Completed The Coding School fellowship exploring quantum circuits and algorithms.',
+    description:
+      'Completed The Coding School fellowship exploring quantum circuits and algorithms.',
     icon: '🧠',
   },
   {
     title: 'Open Source Mentor',
-    description: 'Guided developers on Golang, CI/CD, and scalable cloud patterns through community cohorts.',
+    description:
+      'Guided developers on Golang, CI/CD, and scalable cloud patterns through community cohorts.',
     icon: '🤝',
   },
-];
+]
 
 const About: React.FC = () => {
   return (
@@ -83,222 +109,188 @@ const About: React.FC = () => {
 
       <div className="min-h-screen">
         {/* Hero Section */}
-        <section className="relative overflow-hidden pt-28 pb-20">
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_150%_at_50%_-20%,#e3edff_0%,#f4f7ff_35%,#f9fbff_60%,#f0f5ff_100%)] dark:bg-[radial-gradient(140%_160%_at_50%_-10%,#0c1424_0%,#0f172a_45%,#020817_100%)]" />
-          
-          {/* Floating Elements */}
-          <div className="absolute right-[10%] top-[25%] h-8 w-8 rounded-full bg-blue-300/30 blur-lg dark:bg-blue-400/20 floating" style={{ animationDelay: '0.5s' }} />
-          <div className="absolute left-[15%] top-[15%] h-6 w-6 rounded-full bg-indigo-300/30 blur-md dark:bg-indigo-400/20 floating" style={{ animationDelay: '1.5s' }} />
-          <div className="absolute right-[20%] bottom-[15%] h-10 w-10 rounded-full bg-purple-300/30 blur-lg dark:bg-purple-400/20 floating" style={{ animationDelay: '2s' }} />
-          <div className="absolute left-[10%] bottom-[25%] h-5 w-5 rounded-full bg-primary-300/30 blur-sm dark:bg-primary-400/20 floating" style={{ animationDelay: '3s' }} />
-          
-          {/* Background Blobs */}
-          <div className="absolute right-[-15%] top-[-10%] h-72 w-72 rounded-full bg-primary-400/20 blur-3xl dark:bg-primary-500/10" />
-          <div className="absolute left-[-15%] bottom-[-20%] h-80 w-80 rounded-full bg-primary-200/40 blur-3xl dark:bg-primary-900/40" />
-
-          <div className="container-max">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="surface-panel p-12 md:p-16 text-center max-w-4xl mx-auto"
-            >
-              <span className="eyebrow mb-4 mx-auto">Behind the Code</span>
-              <h1 className="text-4xl md:text-5xl font-heading text-slate-900 dark:text-white mb-6">
-                About Me
-              </h1>
-              <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-10">
-                Full-Stack Developer | Problem Solver | Innovator. I turn complex problems into seamless digital experiences.
-              </p>
-              <a
-                href="https://storage.googleapis.com/argon-magnet-442917-k1.appspot.com/public/Full_Stack_Resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-tooltip-id="about-tooltip"
-                data-tooltip-content="Download my full resume in PDF format"
-                className="btn-primary inline-flex items-center"
-              >
-                <HiDownload className="w-5 h-5 mr-2" />
-                Download Resume
-              </a>
-            </motion.div>
-          </div>
-        </section>
+        <PageSection
+          className="pt-28 pb-20"
+          backgroundClassName="bg-[radial-gradient(120%_150%_at_50%_-20%,#e3edff_0%,#f4f7ff_35%,#f9fbff_60%,#f0f5ff_100%)] dark:bg-[radial-gradient(140%_160%_at_50%_-10%,#0c1424_0%,#0f172a_45%,#020817_100%)]"
+          header={{
+            title: (
+              <>
+                <span className="eyebrow mb-4 mx-auto">Behind the Code</span>
+                <h1 className="text-4xl md:text-5xl font-heading text-slate-900 dark:text-white mb-6">
+                  About Me
+                </h1>
+                <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-10">
+                  Full-Stack Developer | Problem Solver | Innovator. I turn
+                  complex problems into seamless digital experiences.
+                </p>
+                <a
+                  href="/Full_Stack_Resume.pdf"
+                  download
+                  data-tooltip-id="about-tooltip"
+                  data-tooltip-content="Download my full resume in PDF format"
+                  aria-describedby="about-tooltip"
+                  className="btn-primary inline-flex items-center"
+                >
+                  <HiDownload className="w-5 h-5 mr-2" />
+                  Download Resume
+                </a>
+              </>
+            ),
+            className:
+              'surface-panel p-12 md:p-16 text-center max-w-4xl mx-auto',
+          }}
+        />
 
         {/* Mission Section */}
-        <section className="section-padding relative overflow-hidden">
-          {/* Floating Elements for Mission Section */}
-          <div className="absolute left-[5%] top-[10%] h-10 w-10 rounded-full bg-blue-300/20 blur-lg dark:bg-blue-400/10 floating" style={{ animationDelay: '0.8s' }} />
-          <div className="absolute right-[10%] top-[20%] h-6 w-6 rounded-full bg-purple-300/20 blur-md dark:bg-purple-400/10 floating" style={{ animationDelay: '1.8s' }} />
-          <div className="container-max">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="surface-panel max-w-4xl mx-auto text-center p-12"
-            >
-              <span className="eyebrow mb-4 mx-auto">Mission</span>
-              <h2 className="text-3xl md:text-4xl font-heading text-slate-900 dark:text-white mb-6">
-                My Mission
-              </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 mb-0">
-                To create elegant and efficient solutions that solve real-world problems through clean code, inclusive design, and collaborative teamwork.
-              </p>
-            </motion.div>
-          </div>
-        </section>
+        <PageSection
+          className="section-padding"
+          header={{
+            eyebrow: 'Mission',
+            title: 'My Mission',
+            subtitle:
+              'To create elegant and efficient solutions that solve real-world problems through clean code, inclusive design, and collaborative teamwork.',
+            className: 'surface-panel max-w-4xl mx-auto text-center p-12',
+          }}
+        />
 
         {/* Skills Section */}
-        <section className="section-padding bg-white/70 dark:bg-slate-950/50 relative overflow-hidden">
-          {/* Floating Elements for Skills Section */}
-          <div className="absolute right-[5%] top-[15%] h-8 w-8 rounded-full bg-indigo-300/20 blur-lg dark:bg-indigo-400/10 floating" style={{ animationDelay: '1s' }} />
-          <div className="absolute left-[10%] bottom-[15%] h-5 w-5 rounded-full bg-primary-300/20 blur-sm dark:bg-primary-400/10 floating" style={{ animationDelay: '2.2s' }} />
-          <div className="container-max">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <span className="eyebrow mb-4 mx-auto">Toolkit</span>
-              <h2 className="text-3xl md:text-4xl font-heading text-slate-900 dark:text-white mb-4">
-                My Skills
-              </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-                Technologies and toolchains I bring into each engagement to ship reliable, high-performing products.
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {skills.map((skill, index) => (
-                <motion.div
-                  key={skill.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="surface-panel p-6 text-left"
-                  data-tooltip-id="about-tooltip"
-                  data-tooltip-content={skill.description}
-                >
-                  <div className="text-4xl mb-4">{skill.icon}</div>
-                  <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-                    {skill.title}
-                  </h3>
-                  <p className="text-slate-600 dark:text-slate-300">
-                    {skill.description}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
+        <PageSection
+          className="section-padding bg-white/70 dark:bg-slate-950/50"
+          header={{
+            eyebrow: 'Toolkit',
+            title: 'My Skills',
+            subtitle:
+              'Technologies and toolchains I bring into each engagement to ship reliable, high-performing products.',
+            className: 'text-center mb-12',
+          }}
+        >
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            role="list"
+          >
+            {skills.map((skill, index) => (
+              <motion.div
+                key={skill.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="surface-panel p-6 text-left"
+                role="listitem"
+                aria-setsize={skills.length}
+                aria-posinset={index + 1}
+              >
+                <div className="text-4xl mb-4">{skill.icon}</div>
+                <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+                  {skill.title}
+                </h3>
+                <p className="text-slate-600 dark:text-slate-300">
+                  {skill.description}
+                </p>
+              </motion.div>
+            ))}
           </div>
-        </section>
+        </PageSection>
 
         {/* Experience Section */}
-        <section className="section-padding">
-          <div className="container-max">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <span className="eyebrow mb-4 mx-auto">Experience</span>
-              <h2 className="text-3xl md:text-4xl font-heading text-slate-900 dark:text-white mb-4">
-                Work Experience
-              </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-                Highlights from an ambitious journey spanning growth-stage SaaS, education technology, and developer tooling.
-              </p>
-            </motion.div>
-
-            <div className="space-y-12">
-              {experiences.map((exp, index) => (
-                <motion.div
-                  key={`${exp.company}-${index}`}
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="surface-panel flex flex-col md:flex-row gap-8 p-8"
-                >
-                  <div className="md:w-1/3">
-                    <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
-                      {exp.title}
-                    </h3>
-                    <p className="text-primary-600 dark:text-primary-300">
-                      {exp.company}
-                    </p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                      {exp.date} | {exp.location}
-                    </p>
-                  </div>
-                  <div className="md:w-2/3">
-                    <ul className="space-y-2">
-                      {exp.duties.map((duty, i) => (
-                        <li key={i} className="flex items-start">
-                          <span className="text-primary-500 mr-2 mt-1">•</span>
-                          <span className="text-slate-700 dark:text-slate-300">
-                            {duty}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+        <PageSection
+          className="section-padding"
+          header={{
+            eyebrow: 'Experience',
+            title: 'Work Experience',
+            subtitle:
+              'Highlights from an ambitious journey spanning growth-stage SaaS, education technology, and developer tooling.',
+            className: 'text-center mb-12',
+          }}
+        >
+          <div className="space-y-12" role="list">
+            {experiences.map((exp, index) => (
+              <motion.div
+                key={`${exp.company}-${index}`}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="surface-panel flex flex-col md:flex-row gap-8 p-8"
+                role="listitem"
+                aria-setsize={experiences.length}
+                aria-posinset={index + 1}
+              >
+                <div className="md:w-1/3">
+                  <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
+                    {exp.title}
+                  </h3>
+                  <p className="text-primary-600 dark:text-primary-300">
+                    {exp.company}
+                  </p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    {exp.date} | {exp.location}
+                  </p>
+                </div>
+                <div className="md:w-2/3">
+                  <ul className="space-y-2">
+                    {exp.duties.map((duty, i) => (
+                      <li key={i} className="flex items-start">
+                        <span className="text-primary-500 mr-2 mt-1">•</span>
+                        <span className="text-slate-700 dark:text-slate-300">
+                          {duty}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            ))}
           </div>
-        </section>
+        </PageSection>
 
         {/* Achievements Section */}
-        <section className="section-padding bg-white/70 dark:bg-slate-950/50">
-          <div className="container-max">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <span className="eyebrow mb-4 mx-auto">Milestones</span>
-              <h2 className="text-3xl md:text-4xl font-heading text-slate-900 dark:text-white mb-4">
-                Achievements
-              </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-                Recognitions that reflect dedication to continuous learning and impact.
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {achievements.map((achievement, index) => (
-                <motion.div
-                  key={achievement.title}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="surface-panel p-8 text-left"
-                  data-tooltip-id="about-tooltip"
-                  data-tooltip-content={achievement.description}
-                >
-                  <div className="flex items-center mb-4">
-                    <span className="text-3xl mr-4">{achievement.icon}</span>
-                    <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
-                      {achievement.title}
-                    </h3>
-                  </div>
-                  <p className="text-slate-600 dark:text-slate-300">
-                    {achievement.description}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
+        <PageSection
+          className="section-padding bg-white/70 dark:bg-slate-950/50"
+          header={{
+            eyebrow: 'Milestones',
+            title: 'Achievements',
+            subtitle:
+              'Recognitions that reflect dedication to continuous learning and impact.',
+            className: 'text-center mb-12',
+          }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8" role="list">
+            {achievements.map((achievement, index) => (
+              <motion.div
+                key={achievement.title}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="surface-panel p-8 text-left"
+                role="listitem"
+                aria-setsize={achievements.length}
+                aria-posinset={index + 1}
+              >
+                <div className="flex items-center mb-4">
+                  <span className="text-3xl mr-4">{achievement.icon}</span>
+                  <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
+                    {achievement.title}
+                  </h3>
+                </div>
+                <p className="text-slate-600 dark:text-slate-300">
+                  {achievement.description}
+                </p>
+              </motion.div>
+            ))}
           </div>
-        </section>
+        </PageSection>
       </div>
-      
-      <Tooltip id="about-tooltip" place="top" className="z-50" />
-    </>
-  );
-};
 
-export default About;
+      <Tooltip
+        id="about-tooltip"
+        place="top"
+        className="z-50"
+        globalCloseEvents={{ escape: true }}
+      />
+    </>
+  )
+}
+
+export default About

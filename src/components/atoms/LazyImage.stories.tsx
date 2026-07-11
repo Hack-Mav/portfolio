@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import LazyImage from './LazyImage';
+import type { Meta, StoryObj } from '@storybook/react'
+import LazyImage from './LazyImage'
 
 const meta: Meta<typeof LazyImage> = {
   title: 'Atoms/LazyImage',
@@ -8,7 +8,8 @@ const meta: Meta<typeof LazyImage> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'LazyImage component that loads images when they enter the viewport with Intersection Observer.',
+        component:
+          'LazyImage component that loads images when they enter the viewport with Intersection Observer.',
       },
     },
     a11y: {
@@ -52,17 +53,17 @@ const meta: Meta<typeof LazyImage> = {
       control: 'text',
     },
   },
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
     src: 'https://picsum.photos/400/300',
     alt: 'Test image',
   },
-};
+}
 
 export const WithPlaceholder: Story = {
   args: {
@@ -70,7 +71,7 @@ export const WithPlaceholder: Story = {
     alt: 'Test image with placeholder',
     placeholder: 'https://picsum.photos/400/300?blur=10',
   },
-};
+}
 
 export const CustomThreshold: Story = {
   args: {
@@ -78,7 +79,7 @@ export const CustomThreshold: Story = {
     alt: 'Test image with custom threshold',
     threshold: 0.5,
   },
-};
+}
 
 export const CustomRootMargin: Story = {
   args: {
@@ -86,7 +87,7 @@ export const CustomRootMargin: Story = {
     alt: 'Test image with custom root margin',
     rootMargin: '100px',
   },
-};
+}
 
 export const CustomClassName: Story = {
   args: {
@@ -94,35 +95,35 @@ export const CustomClassName: Story = {
     alt: 'Test image with custom class',
     className: 'rounded-lg shadow-lg',
   },
-};
+}
 
 export const LargeImage: Story = {
   args: {
     src: 'https://picsum.photos/800/600',
     alt: 'Large test image',
   },
-};
+}
 
 export const SmallImage: Story = {
   args: {
     src: 'https://picsum.photos/200/150',
     alt: 'Small test image',
   },
-};
+}
 
 export const WithoutAlt: Story = {
   args: {
     src: 'https://picsum.photos/400/300',
     alt: '',
   },
-};
+}
 
 export const EmptySrc: Story = {
   args: {
     src: '',
     alt: 'Empty src test',
   },
-};
+}
 
 // Visual regression test stories
 export const VisualRegression: Story = {
@@ -143,7 +144,7 @@ export const VisualRegression: Story = {
       },
     },
   },
-};
+}
 
 // Accessibility test stories
 export const Accessibility: Story = {
@@ -156,7 +157,7 @@ export const Accessibility: Story = {
       disable: false,
     },
   },
-};
+}
 
 // Loading states
 export const LoadingState: Story = {
@@ -169,7 +170,7 @@ export const LoadingState: Story = {
       delay: 1000, // Show loading state for 1 second
     },
   },
-};
+}
 
 // Error state
 export const ErrorState: Story = {
@@ -177,4 +178,4 @@ export const ErrorState: Story = {
     src: 'https://invalid-url-that-will-fail.com/image.jpg',
     alt: 'Error state image',
   },
-};
+}

@@ -1,12 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-@import './accessibility.css';
+@import './tokens.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 .floating {
@@ -47,11 +51,21 @@
 
   body {
     @apply font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300;
-    background: radial-gradient(120% 120% at 50% 0%, #f9fbff 0%, #e5edff 45%, #eff4ff 100%);
+    background: radial-gradient(
+      120% 120% at 50% 0%,
+      #f9fbff 0%,
+      #e5edff 45%,
+      #eff4ff 100%
+    );
   }
 
   .dark body {
-    background: radial-gradient(140% 140% at 50% 0%, rgba(30, 41, 59, 1) 0%, rgba(15, 23, 42, 1) 50%, rgba(2, 6, 23, 1) 100%);
+    background: radial-gradient(
+      140% 140% at 50% 0%,
+      rgba(30, 41, 59, 1) 0%,
+      rgba(15, 23, 42, 1) 50%,
+      rgba(2, 6, 23, 1) 100%
+    );
   }
 
   h1,
@@ -77,10 +91,6 @@
     @apply bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 px-6 py-3 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
   }
 
-  .card {
-    @apply bg-white/80 dark:bg-slate-900/70 backdrop-blur-lg rounded-2xl shadow-lg border border-white/60 dark:border-slate-800/80 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl;
-  }
-
   .section-padding {
     @apply px-4 sm:px-6 lg:px-8 py-12 lg:py-16;
   }
@@ -98,6 +108,49 @@
   }
 }
 
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+/* Focus outline for keyboard users (toggled by FocusIndicator) */
+.keyboard-navigation *:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+@media (prefers-contrast: high) {
+  .keyboard-navigation *:focus {
+    outline: 3px solid #000000;
+    outline-offset: 2px;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Forced colors / Windows high-contrast mode fallbacks */
+@media (forced-colors: active) {
+  .surface-panel,
+  .card,
+  [class*='surface-panel'] {
+    background: Canvas !important;
+    border-color: CanvasText !important;
+    color: CanvasText !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .bg-clip-text {
+    background: none !important;
+    background-image: none !important;
+    color: CanvasText !important;
+    -webkit-text-fill-color: CanvasText !important;
+    background-clip: border-box !important;
+    -webkit-background-clip: border-box !important;
+  }
 }

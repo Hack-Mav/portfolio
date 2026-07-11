@@ -1,17 +1,20 @@
 // Atoms
-export * from './atoms';
+export * from './atoms'
 
 // Molecules
-export * from './molecules';
+export * from './molecules'
 
 // Organisms
-export * from './organisms';
+export * from './organisms'
 
 // Templates
-export * from './templates';
+export * from './templates'
 
 // Pages
-export * from './pages';
+export * from './pages'
 
 // Error Boundaries
-export { default as AppErrorBoundary } from './AppErrorBoundary';
+export { default as AppErrorBoundary } from './AppErrorBoundary'
+
+// Design system primitives
+export * from '@/design-system'

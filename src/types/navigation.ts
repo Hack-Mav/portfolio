@@ -1,6 +1,6 @@
 export interface NavItem {
-  name: string;
-  href: string;
+  name: string
+  href: string
 }
 
-export type ThemeMode = 'light' | 'dark';
+export type ThemeMode = 'light' | 'dark'

@@ -1,88 +1,91 @@
-import React, { Component, ComponentType, ReactNode, ReactElement } from 'react';
-import * as Sentry from '@sentry/react';
+import React, { Component, ComponentType, ReactNode, ReactElement } from 'react'
+import * as Sentry from '@sentry/react'
 
 type FallbackProps = {
-  error: Error;
-  componentStack: string | null;
-  resetError: () => void;
-};
+  error: Error
+  componentStack: string | null
+  resetError: () => void
+}
 
-type FallbackRender = (props: FallbackProps) => ReactElement;
+type FallbackRender = (props: FallbackProps) => ReactElement
 
 export interface AppErrorBoundaryProps {
-  children: ReactNode;
-  fallback?: ReactElement | FallbackRender;
-  onError?: (error: Error, componentStack: string) => void;
+  children: ReactNode
+  fallback?: ReactElement | FallbackRender
+  onError?: (error: Error, componentStack: string) => void
 }
 
 interface AppErrorBoundaryState {
-  hasError: boolean;
-  error: Error | null;
-  componentStack: string | null;
+  hasError: boolean
+  error: Error | null
+  componentStack: string | null
 }
 
 /**
  * A reusable error boundary component that can be used to catch and handle errors in React components.
  * It integrates with Sentry for error tracking in production.
  */
-class AppErrorBoundary extends Component<AppErrorBoundaryProps, AppErrorBoundaryState> {
+class AppErrorBoundary extends Component<
+  AppErrorBoundaryProps,
+  AppErrorBoundaryState
+> {
   constructor(props: AppErrorBoundaryProps) {
-    super(props);
+    super(props)
     this.state = {
       hasError: false,
       error: null,
       componentStack: null,
-    };
+    }
   }
 
   static getDerivedStateFromError(error: Error) {
-    return { 
+    return {
       hasError: true,
       error,
       componentStack: error.stack || null,
-    };
+    }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    const componentStack = errorInfo.componentStack || null;
-    
+    const componentStack = errorInfo.componentStack || null
+
     // Update state with the component stack for better error reporting
-    this.setState({ 
+    this.setState({
       hasError: true,
       error,
-      componentStack 
-    });
-    
+      componentStack,
+    })
+
     // Call the onError handler if provided
     if (this.props.onError) {
-      this.props.onError(error, componentStack || '');
+      this.props.onError(error, componentStack || '')
     }
-    
+
     // Always log to Sentry, but in tests we'll mock the implementation
     Sentry.withScope(scope => {
       if (componentStack) {
-        scope.setExtras({ componentStack });
+        scope.setExtras({ componentStack })
       }
-      Sentry.captureException(error);
-    });
+      Sentry.captureException(error)
+    })
   }
 
   resetError = () => {
-    this.setState({ 
-      hasError: false, 
-      error: null, 
-      componentStack: null 
-    });
-  };
+    this.setState({
+      hasError: false,
+      error: null,
+      componentStack: null,
+    })
+  }
 
   render() {
-    const { hasError, error, componentStack } = this.state;
-    const { children, fallback } = this.props;
+    const { hasError, error, componentStack } = this.state
+    const { children, fallback } = this.props
 
     if (hasError && error) {
       // In test environment, log the error for debugging
       if (process.env.NODE_ENV === 'test') {
-        console.error('Error in component:', error);
+        console.error('Error in component:', error)
       }
       // Default fallback UI
       const defaultFallback = (
@@ -101,25 +104,25 @@ class AppErrorBoundary extends Component<AppErrorBoundaryProps, AppErrorBoundary
             Try again
           </button>
         </div>
-      );
+      )
 
       // If a fallback is provided, use it
       if (fallback) {
         if (typeof fallback === 'function') {
-          return fallback({ 
-            error, 
-            componentStack, 
-            resetError: this.resetError 
-          });
+          return fallback({
+            error,
+            componentStack,
+            resetError: this.resetError,
+          })
         }
-        return fallback;
+        return fallback
       }
-      
+
       // Use default fallback if none provided
-      return defaultFallback;
+      return defaultFallback
     }
 
-    return children;
+    return children
   }
 }
 
@@ -133,17 +136,17 @@ export const withErrorBoundary = <P extends object>(
   Component: ComponentType<P>,
   options?: Omit<AppErrorBoundaryProps, 'children'>
 ): React.FC<P> => {
-  const WrappedComponent: React.FC<P> = (props) => (
+  const WrappedComponent: React.FC<P> = props => (
     <AppErrorBoundary {...options}>
       <Component {...props} />
     </AppErrorBoundary>
-  );
+  )
 
   // Set a display name for the wrapped component for better debugging
-  const componentName = Component.displayName || Component.name || 'Component';
-  WrappedComponent.displayName = `withErrorBoundary(${componentName})`;
+  const componentName = Component.displayName || Component.name || 'Component'
+  WrappedComponent.displayName = `withErrorBoundary(${componentName})`
 
-  return WrappedComponent;
-};
+  return WrappedComponent
+}
 
-export default AppErrorBoundary;
+export default AppErrorBoundary
