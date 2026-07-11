@@ -33,18 +33,21 @@ A modern, responsive developer portfolio built with React 18, TypeScript, Vite, 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - npm (v9+) or yarn (v1.22+)
 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/your-username/portfolio.git
    cd portfolio
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    # or
@@ -52,32 +55,37 @@ A modern, responsive developer portfolio built with React 18, TypeScript, Vite, 
    ```
 
 3. **Start development server**
+
    ```bash
    npm run dev
    # or
    yarn dev
    ```
+
    Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
 
 4. **Run tests**
+
    ```bash
    # Run all tests
    npm test
-   
+
    # Run tests in watch mode
    npm run test:watch
-   
+
    # Run tests with coverage
    npm run test:coverage
-   
+
    # Run UI tests
    npm run test:ui
    ```
 
 5. **Run Storybook**
+
    ```bash
    npm run storybook
    ```
+
    Open [http://localhost:6006](http://localhost:6006) to view the component library.
 
 6. **Build for production**
@@ -125,9 +133,11 @@ src/
 ## 🎨 Customization
 
 ### Personal Information
+
 Update the following files with your information:
 
 1. **Environment Variables** (`.env`)
+
    ```env
    VITE_APP_TITLE="Your Name - Portfolio"
    VITE_APP_DESCRIPTION="Your professional portfolio"
