@@ -1,7 +1,7 @@
 // src/setupTests.ts
-import '@testing-library/jest-dom';
-import { cleanup } from '@testing-library/react';
-import { afterEach, vi } from 'vitest';
+import '@testing-library/jest-dom'
+import { cleanup } from '@testing-library/react'
+import { beforeEach, afterEach, vi } from 'vitest'
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -16,7 +16,7 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-});
+})
 
 // Mock localStorage
 const localStorageMock = {
@@ -24,18 +24,50 @@ const localStorageMock = {
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
-};
+}
 
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
   writable: true,
-});
+})
 
 // Mock scrollTo
-window.scrollTo = vi.fn();
+window.scrollTo = vi.fn()
+
+// Mock IntersectionObserver for FadeIn-based scroll animations
+beforeEach(() => {
+  globalThis.IntersectionObserver = vi.fn(function (
+    this: void,
+    callback: IntersectionObserverCallback
+  ) {
+    return {
+      observe: (element: Element) => {
+        callback(
+          [
+            {
+              isIntersecting: true,
+              target: element,
+              boundingClientRect: {} as DOMRectReadOnly,
+              intersectionRatio: 1,
+              intersectionRect: {} as DOMRectReadOnly,
+              rootBounds: null,
+              time: Date.now(),
+            },
+          ] as unknown as IntersectionObserverEntry[],
+          {} as IntersectionObserver
+        )
+      },
+      unobserve: vi.fn(),
+      disconnect: vi.fn(),
+      root: null,
+      rootMargin: '',
+      thresholds: [0],
+    }
+  }) as unknown as typeof IntersectionObserver
+})
 
 // Cleanup after each test
 afterEach(() => {
-  cleanup();
-  vi.clearAllMocks();
-});
+  cleanup()
+  vi.clearAllMocks()
+})
