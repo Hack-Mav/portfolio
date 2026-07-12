@@ -87,3 +87,10 @@ CODEBASE_CRITIQUE_*.md
 
 # GCP Service Account Key
 gcp-sa-key.json
+
+# Planning and personal documents
+MODERNIZATION_PLAN.md
+Personal Context Document.txt
+
+# Generated changelog from git history (created by Vite plugin)
+public/changelog.json
