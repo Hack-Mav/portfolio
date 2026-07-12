@@ -67,6 +67,7 @@ desktop.ini
 *.tsbuildinfo
 
 # Debug logs
+lint-output.txt
 
 # Deployment
 deployment/
