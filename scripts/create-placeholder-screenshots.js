@@ -1,5 +1,4 @@
 import sharp from 'sharp';
-import { writeFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 

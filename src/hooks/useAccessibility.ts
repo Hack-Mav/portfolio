@@ -77,7 +77,7 @@ export function useKeyboardNavigation(
   } = {}
 ) {
   const {
-    orientation = 'vertical',
+    orientation: _orientation = 'vertical',
     loop = true,
     activateOnEnter = true,
     activateOnSpace = true,

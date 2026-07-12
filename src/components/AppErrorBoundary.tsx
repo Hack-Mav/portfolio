@@ -132,6 +132,7 @@ class AppErrorBoundary extends Component<
  * @param options Options for the error boundary
  * @returns A new component wrapped with the error boundary
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const withErrorBoundary = <P extends object>(
   Component: ComponentType<P>,
   options?: Omit<AppErrorBoundaryProps, 'children'>

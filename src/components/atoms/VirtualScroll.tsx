@@ -93,6 +93,7 @@ export const VirtualScroll: React.FC<VirtualScrollProps> = ({
 /**
  * Hook for virtual scrolling implementation
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const useVirtualScroll = (
   items: any[],
   itemHeight: number,

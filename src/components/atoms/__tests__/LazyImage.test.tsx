@@ -340,7 +340,7 @@ describe('LazyImage', () => {
   })
 
   it('handles multiple images correctly', () => {
-    const { rerender } = render(
+    const { rerender: _rerender } = render(
       <TestWrapper>
         <LazyImage {...defaultProps} />
         <LazyImage src="https://example.com/image2.jpg" alt="Second image" />

@@ -207,6 +207,7 @@ function createMotion(tag: keyof JSX.IntrinsicElements) {
 }
 
 // Build a motion object that supports any intrinsic element.
+// eslint-disable-next-line react-refresh/only-export-components
 export const motion = new Proxy<Record<string, React.ComponentType<any>>>(
   {},
   {
