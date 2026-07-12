@@ -10,9 +10,11 @@ export default [
   {
     ignores: [
       'dist',
+      'dev-dist',
       'node_modules',
       '**/node_modules/**/*',
       '**/dist/**/*',
+      '**/dev-dist/**/*',
       '**/build/**/*',
       '**/coverage/**/*',
       '**/*.d.ts',
@@ -205,6 +207,7 @@ export default [
         __DEV__: 'readonly',
         __PROD__: 'readonly',
         __dirname: 'readonly',
+        Buffer: 'readonly',
         // Browser globals
         window: 'readonly',
         document: 'readonly',
