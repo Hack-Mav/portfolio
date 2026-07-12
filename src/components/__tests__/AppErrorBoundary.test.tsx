@@ -95,7 +95,7 @@ describe('AppErrorBoundary', () => {
     }
 
     // First render with error
-    const { container, rerender } = render(
+    const { container: _container, rerender } = render(
       <AppErrorBoundary>
         <TestComponent shouldError={true} />
       </AppErrorBoundary>
