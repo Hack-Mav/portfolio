@@ -6,27 +6,23 @@ A modern, responsive developer portfolio built with React 18, TypeScript, Vite, 
 
 - **Modern Tech Stack**: React 18, TypeScript, Vite, Tailwind CSS
 - **Type Safety**: Full TypeScript support for better developer experience
-- **State Management**: Redux Toolkit for predictable state management
-- **Animation**: Framer Motion for smooth, performant animations
-- **Testing**: Comprehensive test suite with Vitest and React Testing Library
+- **Testing**: Comprehensive test suite with Vitest, React Testing Library, and Playwright
 - **Documentation**: Storybook for component documentation
 - **Performance Optimized**: Code splitting, lazy loading, and PWA support
-- **SEO & Security**: React Helmet Async and Helmet for meta tags and security headers
+- **SEO**: React Helmet Async for meta tags and canonical links
 - **Analytics**: Web Vitals monitoring
 - **CI/CD**: GitHub Actions for automated testing and deployment
 
 ## 🛠 Tech Stack
 
 - **Frontend**: React 18, TypeScript, React Router v7
-- **State Management**: Redux Toolkit, React-Redux
 - **Styling**: Tailwind CSS 3.4 with tailwind-merge
 - **Build Tool**: Vite 7.3
 - **Testing**: Vitest, React Testing Library, Playwright
 - **Documentation**: Storybook, TypeDoc
 - **Linting/Formatting**: ESLint, Prettier
 - **Type Checking**: TypeScript 5.9
-- **Animation**: Framer Motion
-- **API Client**: Axios
+- **Animation**: CSS transitions and a lightweight motion shim
 - **Error Tracking**: Sentry
 - **PWA**: Vite PWA Plugin
 
@@ -98,33 +94,44 @@ A modern, responsive developer portfolio built with React 18, TypeScript, Vite, 
 
 ```
 src/
-├── components/                # Reusable UI components
-│   ├── ErrorBoundary/         # Error boundary components
-│   ├── atoms/                 # Atomic design components
-│   └── ...
+├── components/                # Reusable UI components organized by atomic design
+│   ├── atoms/                 # Basic UI elements (Button, LazyImage, LoadingSpinner, etc.)
+│   ├── molecules/             # Composite components (SocialLink, etc.)
+│   ├── organisms/             # Complex components (ProjectCard, etc.)
+│   ├── templates/             # Page layout templates (PageSection)
+│   └── AppErrorBoundary.tsx   # Global error boundary
 ├── constants/                 # Application constants
 │   └── routes.ts              # Route configurations
+├── design-system/            # Design tokens and reusable primitives
+│   ├── primitives.tsx         # Surface, Heading, Text, Eyebrow, FadeIn components
+│   ├── tokens.ts              # Design tokens (colors, spacing, typography)
+│   └── Input.tsx              # Accessible input component
 ├── hooks/                    # Custom React hooks
-├── lib/                      # Third-party library configurations
-├── middleware/               # Application middleware
+│   ├── useGitHub.ts           # GitHub API integration
+│   ├── useDebouncedCallback.ts # Debouncing utility
+│   └── ...
+├── lib/                      # Third-party library shims
+│   └── framer-motion.tsx      # Lightweight motion shim using design-system primitives
 ├── pages/                    # Page components
 │   ├── Home.tsx              # Landing page
 │   ├── About.tsx             # About page with skills and experience
 │   ├── Projects.tsx          # Projects showcase
 │   ├── Contact.tsx           # Contact information and form
-│   └── ...
-├── services/                 # API services
-├── store/                    # Redux store configuration
-│   ├── slices/               # Redux slices
-│   └── store.ts              # Store configuration
+│   └── NotFound.tsx          # 404 page
 ├── stories/                  # Storybook stories
-│   ├── components/           # Component stories
-│   └── pages/                # Page stories
+│   ├── Button.stories.ts
+│   ├── Header.stories.ts
+│   ├── Page.stories.ts
+│   └── Configure.mdx         # Storybook configuration
 ├── styles/                   # Global styles
 │   └── globals.css           # Global CSS with Tailwind directives
 ├── test-utils.tsx            # Testing utilities
 ├── types/                    # TypeScript type definitions
+│   └── github/               # GitHub API types
 ├── utils/                    # Utility functions
+│   ├── cn.ts                 # Tailwind class merger
+│   ├── error-handler.ts      # Sentry error handling
+│   └── ...
 ├── App.test.tsx              # Main App component tests
 ├── App.tsx                   # Root component
 └── main.tsx                  # Application entry point
@@ -141,9 +148,12 @@ Update the following files with your information:
    ```env
    VITE_APP_TITLE="Your Name - Portfolio"
    VITE_APP_DESCRIPTION="Your professional portfolio"
+   VITE_SITE_URL=https://your-domain.com
    VITE_APP_GITHUB_USERNAME="your-username"
    VITE_APP_LINKEDIN_USERNAME="your-linkedin"
    VITE_APP_TWITTER_USERNAME="your-twitter"
+   VITE_SENTRY_DSN=your_sentry_dsn_here
+   VITE_FORMSPREE_FORM_ID=your_formspree_id_here
    ```
 
 2. **About Page** (`src/pages/About.tsx`)
@@ -153,9 +163,10 @@ Update the following files with your information:
 3. **Contact Page** (`src/pages/Contact.tsx`)
    - Update contact details and social media links
    - Configure the contact form to use your preferred backend service
+   - The form currently uses Formspree; ensure `VITE_FORMSPREE_FORM_ID` is set to a valid form ID
 
 4. **Resume**
-   - Replace `/public/asserts/Full_Stack_Resume.pdf` with your resume
+   - Replace `/public/Full_Stack_Resume.pdf` with your resume
    - Update any direct links to your resume in the codebase
 
 ## 🚀 Development
@@ -177,7 +188,7 @@ Update the following files with your information:
 
 ## 📝 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the [BSD 3-Clause License](LICENSE).
 
 ---
 
