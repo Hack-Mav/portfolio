@@ -448,9 +448,6 @@ test.describe('Portfolio E2E Tests', () => {
       const ogDescription = await page
         .locator('meta[property="og:description"]')
         .getAttribute('content')
-      const ogImage = await page
-        .locator('meta[property="og:image"]')
-        .getAttribute('content')
 
       expect(ogTitle).toBeTruthy()
       expect(ogDescription).toBeTruthy()

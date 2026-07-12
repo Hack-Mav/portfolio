@@ -44,14 +44,13 @@ function App() {
             id="main-content"
             className="px-4 sm:px-6 lg:px-8 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
             role="main"
-            tabIndex={-1}
           >
             <Suspense fallback={<LoadingSpinner />}>
               <Routes location={location}>
                 <Route
                   path={ROUTES.HOME}
                   element={
-                    <PageTransition key={location.pathname}>
+                    <PageTransition>
                       <Home />
                     </PageTransition>
                   }
@@ -59,7 +58,7 @@ function App() {
                 <Route
                   path={ROUTES.ABOUT}
                   element={
-                    <PageTransition key={location.pathname}>
+                    <PageTransition>
                       <About />
                     </PageTransition>
                   }
@@ -67,23 +66,19 @@ function App() {
                 <Route
                   path={ROUTES.PROJECTS}
                   element={
-                    <PageTransition key={location.pathname}>
+                    <PageTransition>
                       <Projects />
                     </PageTransition>
                   }
                 />
                 <Route
                   path={ROUTES.CONTACT}
-                  element={
-                    <PageTransition key={location.pathname}>
-                      <Contact />
-                    </PageTransition>
-                  }
+                  element={<Contact />}
                 />
                 <Route
                   path={ROUTES.UNDEFINED}
                   element={
-                    <PageTransition key={location.pathname}>
+                    <PageTransition>
                       <NotFound />
                     </PageTransition>
                   }
