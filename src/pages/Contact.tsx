@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent, FocusEvent, ReactNode } from 'react'
+import { useState, FormEvent, FocusEvent, ReactNode, useCallback, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import {
@@ -26,21 +26,6 @@ interface SubmitStatus {
   message: string
 }
 
-interface FormInputProps {
-  label: string
-  name: string
-  type?: string
-  value: string
-  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-  onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-  required?: boolean
-  className?: string
-  placeholder?: string
-  textarea?: boolean
-  tooltip?: string
-  error?: string
-}
-
 interface ContactItemProps {
   icon: ReactNode
   title: string
@@ -60,8 +45,7 @@ interface FormspreeError {
   message?: string
 }
 
-const FORMSPREE_FORM_ID =
-  import.meta.env.VITE_FORMSPREE_FORM_ID || 'your-form-id'
+const FORMSPREE_FORM_ID = import.meta.env.VITE_FORMSPREE_FORM_ID ?? ''
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -105,12 +89,11 @@ const validateForm = (data: FormData): Record<keyof FormData, string> => ({
 })
 
 const Contact: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  })
+  const nameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const subjectRef = useRef<HTMLInputElement>(null)
+  const messageRef = useRef<HTMLTextAreaElement>(null)
+
   const [errors, setErrors] = useState<Record<keyof FormData, string>>({
     name: '',
     email: '',
@@ -120,28 +103,40 @@ const Contact: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus | null>(null)
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-    setErrors(prev => ({ ...prev, [name as keyof FormData]: '' }))
-  }
+  // Initialize character count on mount
+  useEffect(() => {
+    const charCount = document.getElementById('message-char-count')
+    if (charCount) {
+      charCount.textContent = '0'
+    }
+  }, [])
 
-  const handleBlur = (
-    e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setErrors(prev => ({
-      ...prev,
-      [name as keyof FormData]: validateField(name as keyof FormData, value),
-    }))
-  }
+    // Update character count for message field
+    if (name === 'message') {
+      const charCount = document.getElementById('message-char-count')
+      if (charCount) {
+        charCount.textContent = value.length.toString()
+      }
+    }
+  }, [])
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleBlur = useCallback((e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // No-op - validation only on submit to prevent re-renders
+  }, [])
+
+  const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus(null)
+
+    const formData: FormData = {
+      name: nameRef.current?.value || '',
+      email: emailRef.current?.value || '',
+      subject: subjectRef.current?.value || '',
+      message: messageRef.current?.value || '',
+    }
 
     const validationErrors = validateForm(formData)
     setErrors(validationErrors)
@@ -157,11 +152,11 @@ const Contact: React.FC = () => {
       return
     }
 
-    if (FORMSPREE_FORM_ID === 'your-form-id') {
+    if (!FORMSPREE_FORM_ID || FORMSPREE_FORM_ID === 'your-form-id') {
       setSubmitStatus({
         type: 'error',
         message:
-          'Form is not properly configured. Please contact the administrator.',
+          'Contact form is not configured. Set VITE_FORMSPREE_FORM_ID in your environment.',
       })
       setIsSubmitting(false)
       return
@@ -173,10 +168,10 @@ const Contact: React.FC = () => {
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
             Accept: 'application/json',
           },
-          body: JSON.stringify({
+          body: new URLSearchParams({
             name: formData.name,
             email: formData.email,
             subject: formData.subject,
@@ -195,22 +190,33 @@ const Contact: React.FC = () => {
           type: 'success',
           message: "Thank you for reaching out! I'll get back to you soon.",
         })
-        setFormData({ name: '', email: '', subject: '', message: '' })
+        if (nameRef.current) nameRef.current.value = ''
+        if (emailRef.current) emailRef.current.value = ''
+        if (subjectRef.current) subjectRef.current.value = ''
+        if (messageRef.current) messageRef.current.value = ''
         setErrors({ name: '', email: '', subject: '', message: '' })
+        const charCount = document.getElementById('message-char-count')
+        if (charCount) charCount.textContent = '0'
       } else {
         const serverErrors = data?.errors
         if (Array.isArray(serverErrors) && serverErrors.length > 0) {
           const fieldErrors = { name: '', email: '', subject: '', message: '' }
+          let hasFieldErrors = false
           serverErrors.forEach(err => {
             if (err.field && err.field in fieldErrors) {
               fieldErrors[err.field as keyof FormData] =
                 err.message || 'Invalid value'
+              hasFieldErrors = true
             }
           })
           setErrors(fieldErrors)
           setSubmitStatus({
             type: 'error',
-            message: 'Please correct the highlighted errors and try again.',
+            message: hasFieldErrors
+              ? 'Please correct the highlighted errors and try again.'
+              : data.error ||
+                serverErrors[0]?.message ||
+                'Submission failed. Please try again.',
           })
         } else {
           throw new Error(data.error || 'Submission failed')
@@ -227,7 +233,7 @@ const Contact: React.FC = () => {
     } finally {
       setIsSubmitting(false)
     }
-  }
+  }, [])
 
   return (
     <>
@@ -298,54 +304,176 @@ const Contact: React.FC = () => {
 
               <form noValidate onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormInput
-                    label="Name"
-                    name="name"
-                    type="text"
-                    value={formData.name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={errors.name}
-                    required
-                    placeholder="Your name"
-                    tooltip="Enter your full name"
-                  />
-                  <FormInput
-                    label="Email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={errors.email}
-                    required
-                    placeholder="your.email@example.com"
-                    tooltip="Enter your email address for response"
-                  />
+                  <div>
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Name
+                      <span className="text-red-500" aria-hidden="true">
+                        *
+                      </span>
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        ref={nameRef}
+                        type="text"
+                        id="name"
+                        name="name"
+                        defaultValue=""
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        required
+                        aria-required="true"
+                        aria-invalid={errors.name ? 'true' : 'false'}
+                        aria-describedby={errors.name ? 'name-error' : undefined}
+                        placeholder="Your name"
+                        data-tooltip-id="contact-tooltip"
+                        data-tooltip-content="Enter your full name"
+                        className={`block w-full px-4 py-2 mt-1 text-gray-900 bg-white border rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 ${
+                          errors.name
+                            ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                            : 'border-gray-300'
+                        }`}
+                      />
+                    </div>
+                    {errors.name && (
+                      <p id="name-error" className="mt-1 text-sm text-red-600" role="alert">
+                        {errors.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Email
+                      <span className="text-red-500" aria-hidden="true">
+                        *
+                      </span>
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        ref={emailRef}
+                        type="email"
+                        id="email"
+                        name="email"
+                        defaultValue=""
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        required
+                        aria-required="true"
+                        aria-invalid={errors.email ? 'true' : 'false'}
+                        aria-describedby={errors.email ? 'email-error' : undefined}
+                        placeholder="your.email@example.com"
+                        data-tooltip-id="contact-tooltip"
+                        data-tooltip-content="Enter your email address for response"
+                        className={`block w-full px-4 py-2 mt-1 text-gray-900 bg-white border rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 ${
+                          errors.email
+                            ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                            : 'border-gray-300'
+                        }`}
+                      />
+                    </div>
+                    {errors.email && (
+                      <p id="email-error" className="mt-1 text-sm text-red-600" role="alert">
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <FormInput
-                  label="Subject"
-                  name="subject"
-                  type="text"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={errors.subject}
-                  required
-                  placeholder="Subject of your message"
-                  tooltip="Brief description of your message topic"
-                />
-                <FormTextArea
-                  label="Message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={errors.message}
-                  required
-                  placeholder="Your message here..."
-                  tooltip="Detailed message or inquiry"
-                />
+
+                <div>
+                  <label
+                    htmlFor="subject"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Subject
+                    <span className="text-red-500" aria-hidden="true">
+                      *
+                    </span>
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      ref={subjectRef}
+                      type="text"
+                      id="subject"
+                      name="subject"
+                      defaultValue=""
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      required
+                      aria-required="true"
+                      aria-invalid={errors.subject ? 'true' : 'false'}
+                      aria-describedby={errors.subject ? 'subject-error' : undefined}
+                      placeholder="Subject of your message"
+                      data-tooltip-id="contact-tooltip"
+                      data-tooltip-content="Brief description of your message topic"
+                      className={`block w-full px-4 py-2 mt-1 text-gray-900 bg-white border rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 ${
+                        errors.subject
+                          ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                          : 'border-gray-300'
+                      }`}
+                    />
+                  </div>
+                  {errors.subject && (
+                    <p id="subject-error" className="mt-1 text-sm text-red-600" role="alert">
+                      {errors.subject}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Message
+                    <span className="text-red-500" aria-hidden="true">
+                      *
+                    </span>
+                  </label>
+                  <div className="mt-1">
+                    <textarea
+                      ref={messageRef}
+                      id="message"
+                      name="message"
+                      defaultValue=""
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      required
+                      aria-required="true"
+                      aria-invalid={errors.message ? 'true' : 'false'}
+                      aria-describedby={errors.message ? 'message-error' : 'message-helper'}
+                      placeholder="Your message here..."
+                      rows={10}
+                      maxLength={1000}
+                      data-tooltip-id="contact-tooltip"
+                      data-tooltip-content="Detailed message or inquiry"
+                      className={`block w-full px-4 py-3 mt-1 text-gray-900 bg-white border rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 resize-none ${
+                        errors.message
+                          ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                          : 'border-gray-300'
+                      }`}
+                    />
+                  </div>
+                  <div className="mt-2 flex items-center justify-between">
+                    <p id="message-helper" className="text-xs text-gray-500 dark:text-gray-400">
+                      Please provide at least 10 characters for your message.
+                    </p>
+                    <span className="text-xs text-gray-400 dark:text-gray-500">
+                      <span id="message-char-count">0</span>/1000
+                    </span>
+                  </div>
+                  {errors.message && (
+                    <p id="message-error" className="mt-1 text-sm text-red-600" role="alert">
+                      {errors.message}
+                    </p>
+                  )}
+                </div>
+
                 <div className="pt-2">
                   <button
                     type="submit"
@@ -480,93 +608,6 @@ const Contact: React.FC = () => {
     </>
   )
 }
-
-const FormInput: React.FC<FormInputProps> = ({
-  label,
-  name,
-  type = 'text',
-  value,
-  onChange,
-  onBlur,
-  required = false,
-  className = '',
-  placeholder = '',
-  textarea = false,
-  tooltip = '',
-  error = '',
-}) => {
-  const errorId = `${name}-error`
-  const tooltipId = tooltip ? 'contact-tooltip' : undefined
-  const describedBy =
-    [error ? errorId : null, tooltipId].filter(Boolean).join(' ') || undefined
-  const inputClass = `block w-full px-4 py-2 mt-1 text-gray-900 bg-white border rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 ${
-    error
-      ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-      : 'border-gray-300'
-  }`
-
-  return (
-    <div className={className}>
-      <label
-        htmlFor={name}
-        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-      >
-        {label}
-        {required && (
-          <span className="text-red-500" aria-hidden="true">
-            *
-          </span>
-        )}
-      </label>
-      <div className="mt-1">
-        {textarea ? (
-          <textarea
-            id={name}
-            name={name}
-            value={value}
-            onChange={onChange}
-            onBlur={onBlur}
-            required={required}
-            aria-required={required}
-            aria-invalid={error ? 'true' : 'false'}
-            aria-describedby={describedBy}
-            placeholder={placeholder}
-            rows={4}
-            data-tooltip-id={tooltipId}
-            data-tooltip-content={tooltip}
-            className={inputClass}
-          />
-        ) : (
-          <input
-            type={type}
-            id={name}
-            name={name}
-            value={value}
-            onChange={onChange}
-            onBlur={onBlur}
-            required={required}
-            aria-required={required}
-            aria-invalid={error ? 'true' : 'false'}
-            aria-describedby={describedBy}
-            placeholder={placeholder}
-            data-tooltip-id={tooltipId}
-            data-tooltip-content={tooltip}
-            className={inputClass}
-          />
-        )}
-      </div>
-      {error && (
-        <p id={errorId} className="mt-1 text-sm text-red-600" role="alert">
-          {error}
-        </p>
-      )}
-    </div>
-  )
-}
-
-const FormTextArea: React.FC<Omit<FormInputProps, 'type'>> = props => (
-  <FormInput {...props} textarea />
-)
 
 const ContactItem: React.FC<ContactItemProps> = ({
   icon,
