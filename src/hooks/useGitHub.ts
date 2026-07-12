@@ -1,31 +1,28 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
-import type { Repository } from '@/types/github'
+import { useCallback, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import type { Repository, GitHubError } from '@/types/github'
 
 const GITHUB_API_URL = 'https://api.github.com'
 const GITHUB_USERNAME = 'parthivrawat'
-const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes
-
-interface CacheEntry {
-  data: Repository[]
-  timestamp: number
-}
-
-let repositoriesCache: CacheEntry | null = null
-
-interface GitHubErrorResponse {
-  message?: string
-  [key: string]: unknown
-}
+const STALE_TIME_MS = 5 * 60 * 1000 // 5 minutes
 
 interface UseGitHubRepositoriesResult {
   repositories: Repository[] | null
   loading: boolean
-  error: {
-    message: string
-    status?: number
-    isRateLimitError?: boolean
-  } | null
-  lastUpdated: number | null
+  error: GitHubError | null
+  lastUpdated: number
+  refetch: () => void
+  retryCount: number
+  resetError: () => void
+  isInitialLoading: boolean
+  isRefreshing: boolean
+}
+
+interface UseGitHubRepositoryResult {
+  repository: Repository | null
+  loading: boolean
+  error: GitHubError | null
+  lastUpdated: number
   refetch: () => void
   retryCount: number
   resetError: () => void
@@ -41,228 +38,144 @@ const isRateLimitError = (status: number, message = ''): boolean => {
   )
 }
 
-const parseError = async (response: Response): Promise<GitHubErrorResponse> => {
+const parseErrorResponse = async (response: Response): Promise<unknown> => {
   try {
-    return (await response.json()) as GitHubErrorResponse
+    return await response.json()
   } catch {
     return {}
   }
 }
 
+const createGitHubError = (
+  status: number,
+  message: string,
+  fallback: string
+): GitHubError => ({
+  message: message || fallback,
+  status,
+  isRateLimitError: isRateLimitError(status, message),
+})
+
+const fetchRepositories = async ({
+  signal,
+}: {
+  signal: AbortSignal
+}): Promise<Repository[]> => {
+  const response = await fetch(
+    `${GITHUB_API_URL}/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100`,
+    {
+      headers: {
+        Accept: 'application/vnd.github.v3+json',
+      },
+      signal,
+    }
+  )
+
+  if (!response.ok) {
+    const data = (await parseErrorResponse(response)) as { message?: string }
+    const message = data.message || ''
+    throw createGitHubError(
+      response.status,
+      message,
+      `Failed to fetch repositories (${response.status})`
+    )
+  }
+
+  return response.json() as Promise<Repository[]>
+}
+
+const fetchRepository = async (
+  repoName: string,
+  signal: AbortSignal
+): Promise<Repository> => {
+  const response = await fetch(
+    `${GITHUB_API_URL}/repos/${GITHUB_USERNAME}/${repoName}`,
+    {
+      headers: {
+        Accept: 'application/vnd.github.v3+json',
+      },
+      signal,
+    }
+  )
+
+  if (!response.ok) {
+    const data = (await parseErrorResponse(response)) as { message?: string }
+    const message = data.message || ''
+    throw createGitHubError(
+      response.status,
+      message,
+      `Failed to fetch repository (${response.status})`
+    )
+  }
+
+  return response.json() as Promise<Repository>
+}
+
 export const useGitHubRepositories = (): UseGitHubRepositoriesResult => {
-  const [repositories, setRepositories] = useState<Repository[] | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<UseGitHubRepositoriesResult['error']>(null)
-  const [lastUpdated, setLastUpdated] = useState<number | null>(null)
   const [retryCount, setRetryCount] = useState<number>(0)
-  const abortRef = useRef<AbortController | null>(null)
 
-  const fetchRepositories = useCallback(async (isRefetch = false) => {
-    if (abortRef.current) {
-      abortRef.current.abort()
-    }
-    const abortController = new AbortController()
-    abortRef.current = abortController
-
-    setLoading(true)
-    if (isRefetch) {
-      setRetryCount(prev => prev + 1)
-    } else {
-      setRetryCount(0)
-    }
-
-    // Return cached data without re-fetching if the cache is still fresh.
-    if (!isRefetch && repositoriesCache) {
-      const isCacheFresh =
-        Date.now() - repositoriesCache.timestamp < CACHE_TTL_MS
-      if (isCacheFresh) {
-        setRepositories(repositoriesCache.data)
-        setLastUpdated(repositoriesCache.timestamp)
-        setLoading(false)
-        setError(null)
-        abortRef.current = null
-        return
-      }
-    }
-
-    try {
-      const response = await fetch(
-        `${GITHUB_API_URL}/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100`,
-        {
-          headers: {
-            Accept: 'application/vnd.github.v3+json',
-          },
-          signal: abortController.signal,
-        }
-      )
-
-      if (!response.ok) {
-        const data = await parseError(response)
-        const message =
-          data.message || `Failed to fetch repositories (${response.status})`
-        setError({
-          message,
-          status: response.status,
-          isRateLimitError: isRateLimitError(response.status, message),
-        })
-        setRepositories(null)
-      } else {
-        const data = (await response.json()) as Repository[]
-        repositoriesCache = { data, timestamp: Date.now() }
-        setRepositories(data)
-        setLastUpdated(Date.now())
-        setError(null)
-      }
-    } catch (err) {
-      if (err instanceof Error && err.name === 'AbortError') {
-        return
-      }
-      setError({
-        message:
-          err instanceof Error
-            ? err.message
-            : 'An unknown network error occurred',
-      })
-      setRepositories(null)
-    } finally {
-      setLoading(false)
-      abortRef.current = null
-    }
-  }, [])
-
-  useEffect(() => {
-    void fetchRepositories(false)
-    return () => {
-      abortRef.current?.abort()
-    }
-  }, [fetchRepositories])
+  const query = useQuery<Repository[], GitHubError>({
+    queryKey: ['github', 'repositories', GITHUB_USERNAME],
+    queryFn: fetchRepositories,
+    staleTime: STALE_TIME_MS,
+    retry: false,
+  })
 
   const refetch = useCallback(() => {
-    void fetchRepositories(true)
-  }, [fetchRepositories])
+    setRetryCount(prev => prev + 1)
+    void query.refetch()
+  }, [query])
 
   const resetError = useCallback(() => {
-    setError(null)
-  }, [])
-
-  const isInitialLoading = loading && !repositories && !error
-  const isRefreshing = loading && !!repositories
+    setRetryCount(0)
+    void query.refetch()
+  }, [query])
 
   return {
-    repositories,
-    loading,
-    error,
-    lastUpdated,
+    repositories: query.data ?? null,
+    loading: query.isFetching,
+    error: query.error ?? null,
+    lastUpdated: query.dataUpdatedAt,
     refetch,
     retryCount,
     resetError,
-    isInitialLoading,
-    isRefreshing,
+    isInitialLoading: query.isLoading,
+    isRefreshing: query.isFetching && !query.isLoading,
   }
 }
 
-export const useGitHubRepository = (repoName: string) => {
-  const [repository, setRepository] = useState<Repository | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<UseGitHubRepositoriesResult['error']>(null)
-  const [lastUpdated, setLastUpdated] = useState<number | null>(null)
+export const useGitHubRepository = (
+  repoName: string
+): UseGitHubRepositoryResult => {
   const [retryCount, setRetryCount] = useState<number>(0)
-  const abortRef = useRef<AbortController | null>(null)
 
-  const fetchRepository = useCallback(
-    async (isRefetch = false) => {
-      if (!repoName) {
-        setLoading(false)
-        setRepository(null)
-        return
-      }
-
-      if (abortRef.current) {
-        abortRef.current.abort()
-      }
-      const abortController = new AbortController()
-      abortRef.current = abortController
-
-      setLoading(true)
-      if (isRefetch) {
-        setRetryCount(prev => prev + 1)
-      } else {
-        setRetryCount(0)
-      }
-
-      try {
-        const response = await fetch(
-          `${GITHUB_API_URL}/repos/${GITHUB_USERNAME}/${repoName}`,
-          {
-            headers: {
-              Accept: 'application/vnd.github.v3+json',
-            },
-            signal: abortController.signal,
-          }
-        )
-
-        if (!response.ok) {
-          const data = await parseError(response)
-          const message =
-            data.message || `Failed to fetch repository (${response.status})`
-          setError({
-            message,
-            status: response.status,
-            isRateLimitError: isRateLimitError(response.status, message),
-          })
-          setRepository(null)
-        } else {
-          const data = (await response.json()) as Repository
-          setRepository(data)
-          setLastUpdated(Date.now())
-          setError(null)
-        }
-      } catch (err) {
-        if (err instanceof Error && err.name === 'AbortError') {
-          return
-        }
-        setError({
-          message:
-            err instanceof Error
-              ? err.message
-              : 'An unknown network error occurred',
-        })
-        setRepository(null)
-      } finally {
-        setLoading(false)
-        abortRef.current = null
-      }
-    },
-    [repoName]
-  )
-
-  useEffect(() => {
-    void fetchRepository(false)
-    return () => {
-      abortRef.current?.abort()
-    }
-  }, [fetchRepository])
+  const query = useQuery<Repository, GitHubError>({
+    queryKey: ['github', 'repository', GITHUB_USERNAME, repoName],
+    queryFn: ({ signal }) => fetchRepository(repoName, signal),
+    enabled: !!repoName,
+    staleTime: STALE_TIME_MS,
+    retry: false,
+  })
 
   const refetch = useCallback(() => {
-    void fetchRepository(true)
-  }, [fetchRepository])
+    setRetryCount(prev => prev + 1)
+    void query.refetch()
+  }, [query])
 
   const resetError = useCallback(() => {
-    setError(null)
-  }, [])
-
-  const isInitialLoading = loading && !repository && !error
-  const isRefreshing = loading && !!repository
+    setRetryCount(0)
+    void query.refetch()
+  }, [query])
 
   return {
-    repository,
-    loading,
-    error,
-    lastUpdated,
+    repository: query.data ?? null,
+    loading: query.isFetching,
+    error: query.error ?? null,
+    lastUpdated: query.dataUpdatedAt,
     refetch,
     retryCount,
     resetError,
-    isInitialLoading,
-    isRefreshing,
+    isInitialLoading: query.isLoading,
+    isRefreshing: query.isFetching && !query.isLoading,
   }
 }

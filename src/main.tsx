@@ -4,9 +4,21 @@ import ReactDOM from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { initSentry, ErrorBoundary } from './utils/error-handler'
 import App from './App'
 import './styles/globals.css'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+})
 
 // Initialize Sentry for error tracking
 initSentry()
@@ -65,11 +77,14 @@ const AppContainer = () => (
   <StrictMode>
     <ErrorBoundary fallback={ErrorFallback}>
       <Suspense fallback={<LoadingSpinner />}>
-        <HelmetProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </HelmetProvider>
+        <QueryClientProvider client={queryClient}>
+          <HelmetProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </HelmetProvider>
+          {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+        </QueryClientProvider>
       </Suspense>
     </ErrorBoundary>
   </StrictMode>
