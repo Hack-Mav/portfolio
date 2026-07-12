@@ -14,6 +14,7 @@ import { ROUTES } from '@/constants/routes'
 const Home = lazy(() => import('@pages/Home'))
 const About = lazy(() => import('@pages/About'))
 const Projects = lazy(() => import('@pages/Projects'))
+const Changelog = lazy(() => import('@pages/Changelog'))
 const Contact = lazy(() => import('@pages/Contact'))
 const NotFound = lazy(() => import('@pages/NotFound'))
 
@@ -68,6 +69,14 @@ function App() {
                   element={
                     <PageTransition>
                       <Projects />
+                    </PageTransition>
+                  }
+                />
+                <Route
+                  path={ROUTES.CHANGELOG}
+                  element={
+                    <PageTransition>
+                      <Changelog />
                     </PageTransition>
                   }
                 />

@@ -14,6 +14,7 @@ const navigation: NavItem[] = [
   { name: 'Home', href: ROUTES.HOME },
   { name: 'About', href: ROUTES.ABOUT },
   { name: 'Projects', href: ROUTES.PROJECTS },
+  { name: 'Changelog', href: ROUTES.CHANGELOG },
   { name: 'Contact', href: ROUTES.CONTACT },
 ]
 
@@ -21,6 +22,7 @@ const tooltipContent: Record<string, string> = {
   Home: 'Navigate to homepage',
   About: 'Learn more about me',
   Projects: 'View my portfolio projects',
+  Changelog: 'View recent updates and changes',
   Contact: 'Get in touch with me',
 }
 
@@ -112,7 +114,7 @@ const Header: React.FC<{ id?: string }> = ({ id }) => {
               to={ROUTES.HOME}
               className="text-xl font-bold text-gray-900 dark:text-white"
             >
-              Portfolio
+              Parthiv Rawat
             </Link>
           </div>
 

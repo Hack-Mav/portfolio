@@ -53,6 +53,11 @@ vi.mock('@components/atoms/LoadingSpinner', () => ({
   default: () => <div>Loading...</div>,
 }))
 
+// Mock page components
+vi.mock('@pages/Changelog', () => ({
+  default: () => <div>Mock Changelog</div>,
+}))
+
 describe('App', () => {
   beforeEach(() => {
     // Clear all mocks before each test

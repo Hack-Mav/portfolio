@@ -4,6 +4,7 @@ declare module '@/constants/routes' {
     HOME: string
     ABOUT: string
     PROJECTS: string
+    CHANGELOG: string
     CONTACT: string
     UNDEFINED: string
   }

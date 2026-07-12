@@ -5,6 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
 import path from 'path'
 import fs from 'node:fs'
+import { execSync } from 'node:child_process'
 import type { PluginOption } from 'vite'
 import { fileURLToPath } from 'node:url'
 
@@ -18,7 +19,81 @@ const dirname =
 const siteUrl = process.env.VITE_SITE_URL || 'https://parthivrawat.com'
 process.env.VITE_SITE_URL = siteUrl
 
-// Generate robots.txt and sitemap.xml after the build completes.
+// Generate changelog.json from git history at build time.
+const changelogPlugin = (): PluginOption => ({
+  name: 'generate-changelog',
+  configureServer() {
+    // Also generate changelog in development mode
+    const distDir = path.resolve(dirname, 'public')
+    fs.mkdirSync(distDir, { recursive: true })
+
+    try {
+      const gitLog = execSync(
+        'git log --pretty=format:"%H|%ai|%s" -20',
+        { encoding: 'utf-8' }
+      )
+
+      const commits = gitLog
+        .split('\n')
+        .filter(Boolean)
+        .map((line: string) => {
+          const [hash, date, subject] = line.split('|')
+          return {
+            hash,
+            date,
+            subject,
+            body: '',
+          }
+        })
+
+      fs.writeFileSync(
+        path.join(distDir, 'changelog.json'),
+        JSON.stringify(commits, null, 2)
+      )
+    } catch (error) {
+      console.warn('Failed to generate changelog from git in dev mode:', error)
+    }
+  },
+  closeBundle() {
+    const distDir = path.resolve(dirname, 'dist')
+    fs.mkdirSync(distDir, { recursive: true })
+
+    try {
+      // Get git log with format: hash|date|subject (excluding body to avoid multiline issues)
+      const gitLog = execSync(
+        'git log --pretty=format:"%H|%ai|%s" -20',
+        { encoding: 'utf-8' }
+      )
+
+      const commits = gitLog
+        .split('\n')
+        .filter(Boolean)
+        .map((line: string) => {
+          const [hash, date, subject] = line.split('|')
+          return {
+            hash,
+            date,
+            subject,
+            body: '',
+          }
+        })
+
+      fs.writeFileSync(
+        path.join(distDir, 'changelog.json'),
+        JSON.stringify(commits, null, 2)
+      )
+    } catch (error) {
+      console.warn('Failed to generate changelog from git:', error)
+      // Fallback: write empty array
+      fs.writeFileSync(
+        path.join(distDir, 'changelog.json'),
+        JSON.stringify([], null, 2)
+      )
+    }
+  },
+})
+
+// Generate robots.txt, sitemap.xml, and feed.xml after the build completes.
 const seoFilesPlugin = (): PluginOption => ({
   name: 'generate-seo-files',
   apply: 'build',
@@ -40,6 +115,7 @@ const seoFilesPlugin = (): PluginOption => ({
       { loc: '/', priority: '1.0', changefreq: 'weekly' },
       { loc: '/about', priority: '0.8', changefreq: 'monthly' },
       { loc: '/projects', priority: '0.9', changefreq: 'weekly' },
+      { loc: '/changelog', priority: '0.6', changefreq: 'weekly' },
       { loc: '/contact', priority: '0.7', changefreq: 'monthly' },
     ]
     const sitemap = [
@@ -59,6 +135,43 @@ const seoFilesPlugin = (): PluginOption => ({
       '',
     ].join('\n')
     fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemap)
+
+    // Generate RSS feed
+    const feedItems = [
+      {
+        title: 'Portfolio Updates',
+        link: `${siteUrl}/changelog`,
+        description: 'Latest updates and changes to the portfolio',
+        pubDate: new Date().toISOString(),
+      },
+    ]
+
+    const feed = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
+      '  <channel>',
+      `    <title>Portfolio | Parthiv Rawat</title>`,
+      `    <link>${siteUrl}</link>`,
+      `    <description>Full-stack developer portfolio showcasing modern web applications and innovative solutions</description>`,
+      `    <language>en-us</language>`,
+      `    <lastBuildDate>${new Date().toISOString()}</lastBuildDate>`,
+      `    <atom:link href="${siteUrl}/feed.xml" rel="self" type="application/rss+xml" />`,
+      ...feedItems.map(item =>
+        [
+          '    <item>',
+          `      <title>${item.title}</title>`,
+          `      <link>${item.link}</link>`,
+          `      <description>${item.description}</description>`,
+          `      <pubDate>${item.pubDate}</pubDate>`,
+          `      <guid>${item.link}</guid>`,
+          '    </item>',
+        ].join('\n')
+      ),
+      '  </channel>',
+      '</rss>',
+      '',
+    ].join('\n')
+    fs.writeFileSync(path.join(distDir, 'feed.xml'), feed)
   },
 })
 
@@ -177,6 +290,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       VitePWA(pwaOptions),
+      changelogPlugin(),
       seoFilesPlugin(),
       // Bundle analyzer only runs when ANALYZE=true and never auto-opens a browser
       process.env.ANALYZE === 'true' &&
